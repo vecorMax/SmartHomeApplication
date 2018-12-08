@@ -3,6 +3,9 @@ package com.smarthome;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
+import android.support.v7.app.AppCompatActivity;
+import android.os.Bundle;
+
 import android.arch.lifecycle.ViewModelProvider;
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -29,11 +33,7 @@ import io.nats.client.SyncSubscription;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static Connection natsConnection;
-    public static SyncSubscription natsSubscription1;
-    public static SyncSubscription natsSubscription2;
-    public static NatsGo natsGo;
-    public static int statusInternet;
+    public static NATS mNats;
     public Switch switch_temp;
 
     @Override
@@ -50,54 +50,26 @@ public class MainActivity extends AppCompatActivity {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
                 // в зависимости от значения isChecked выводим нужное сообщение
                 if (isChecked) {
+                    //инициализация получения данных от сервера NATS
+                    if (mNats == null || mNats.getState() == Thread.State.TERMINATED)
+                    {
+                        mNats = new NATS();
+                        mNats.start();
+                    }
                     Toast.makeText(getApplicationContext(), "Уведомления установлено!", Toast.LENGTH_SHORT).show();
                 } else {
+                    if (mNats != null)
+                    {
+                        mNats.finish();
+                        try {
+                            mNats.join();
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    }
                     Toast.makeText(getApplicationContext(), "Уведомление отключено!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
-    }
-
-    public void initNats()
-    {
-        natsGo = new NatsGo();
-        natsGo.start();
-    }
-
-    class NatsGo extends Thread {
-        @Override
-        public void run() {
-            initConnection();
-        }
-
-        public void initConnection() {
-            try {
-                natsConnection = Nats.connect("nats://192.168.1.103:4222");
-                System.out.print("OK");
-                subscribe();
-            } catch (IOException | InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-
-        public void subscribe() throws IOException, InterruptedException {
-            natsSubscription1 = natsConnection.subscribeSync("TR1", "queue");
-            natsSubscription2 = natsConnection.subscribeSync("TR1C", "queue");
-
-            while (true) {
-                Message message1 = natsSubscription1.nextMessage(2500);
-                Message message2 = natsSubscription2.nextMessage(2500);
-                if (message1 != null) {
-                    byte[] data = message1.getData();
-                    String str = new String(data, "UTF-8");
-                    System.out.print(str);
-                }
-                else if (message2 != null) {
-                    byte[] data = message2.getData();
-                    String str = new String(data, "UTF-8");
-                    System.out.print(str);
-                }
-            }
-        }
     }
 }
