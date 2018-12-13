@@ -48,7 +48,7 @@ public class NATS extends Thread {
         }
     }
 
-    // отключение от сервера
+    // завершение сеанса с сервером от сервера
     public void finish()
     {
         if (natsConnection != null)
