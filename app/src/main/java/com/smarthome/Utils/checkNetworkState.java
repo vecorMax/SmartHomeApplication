@@ -1,10 +1,10 @@
-package com.smarthome;
+package com.smarthome.Utils;
 
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-public class Network
+public class checkNetworkState
 {
     private static final int TYPE_NOT_CONNECTED = 0;
     private static final int TYPE_WIFI = 1;
@@ -28,13 +28,13 @@ public class Network
     }
 
     public static int getConnectivityStatusString(Context context) {
-        int conn = Network.getConnectivityStatus(context);
+        int conn = checkNetworkState.getConnectivityStatus(context);
         int status = 0;
-        if (conn == Network.TYPE_WIFI) {
+        if (conn == checkNetworkState.TYPE_WIFI) {
             status = NETWORK_STATUS_WIFI;
-        } else if (conn == Network.TYPE_MOBILE) {
+        } else if (conn == checkNetworkState.TYPE_MOBILE) {
             status = NETWORK_STATUS_MOBILE;
-        } else if (conn == Network.TYPE_NOT_CONNECTED) {
+        } else if (conn == checkNetworkState.TYPE_NOT_CONNECTED) {
             status = NETWORK_STATUS_NOT_CONNECTED;
         }
         return status;
