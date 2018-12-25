@@ -13,12 +13,7 @@ public class Notify
 {
     public static Context mContext;
     public static boolean getDataTemperatureInside; //создавать/не создавать уведомления по температуре состоянию switch
-    // Идентификатор уведомления
-    private static final int NOTIFY_ID_TEMPERATURE_INSIDE = 1;
 
-    /*
-
-     */
     public static void createNotificationTemperature()
     {
         if (getDataTemperatureInside)

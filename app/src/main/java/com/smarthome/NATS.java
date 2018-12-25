@@ -47,7 +47,7 @@ public class NATS extends Thread {
                 byte[] data = message2.getData();
                 String str = new String(data, "UTF-8");
                 System.out.print(str);
-                Notify.notifyBuilder(str,"Температура в помещении 1");
+                Notify.notifyBuilder(str,"Temperature in Room 1 is changed");
             }
         }
     }

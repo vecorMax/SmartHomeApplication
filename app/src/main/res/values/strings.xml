@@ -17,4 +17,5 @@
     </string>
     <string name="Auth">Authorization</string>
     <string name="password">Password:</string>
+    <string name="search_title">Search</string>
 </resources>

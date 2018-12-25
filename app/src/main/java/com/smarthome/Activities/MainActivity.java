@@ -13,12 +13,14 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.Toast;
+import android.widget.Toolbar;
 
 import com.smarthome.NATS;
 import com.smarthome.Notifications.Notify;
@@ -42,16 +44,18 @@ public class MainActivity extends AppCompatActivity {
 
     public Switch switch_temp;
     final String LOG_TAG  = "status";
-    // это будет именем файла настроек
     public static final String APP_PREFERENCES_SWITCH_TEMPERATURE = "settings";
     public static final String APP_PREFERENCES_COUNTER_SWITCH_TEMPERATURE = "switch_temp";
     private SharedPreferences mSettings;
+    private Toolbar toolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.d(LOG_TAG,"MainActivity: onCreate()");
+         Log.d(LOG_TAG,"MainActivity: onCreate()");
+
+        initToolbar();
 
         //запускаем сервис по получению сообщений от сервера NATS при наличии интернета
         startService(new Intent(this,ServiceNotify.class));
@@ -60,25 +64,36 @@ public class MainActivity extends AppCompatActivity {
         mSettings = getSharedPreferences(APP_PREFERENCES_SWITCH_TEMPERATURE, Context.MODE_PRIVATE);
 
         //Инициализация элементов activity_main
-        switch_temp = findViewById(R.id.switch_Temperature);
+        //switch_temp = findViewById(R.id.switch_Temperature);
 
         // добавляем слушателя переключателя
-        switch_temp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//        switch_temp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+//
+//            @Override
+//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+//                if (isChecked) {
+//                    //Рассылка уведомлений о получений данных о погоде установлена
+//                    Notify.getDataTemperatureInside = true;
+//                    Notify.mContext = getApplicationContext();
+//                } else {
+//                    //Рассылка уведомлений о получении данных о погоде установлена
+//                    Notify.getDataTemperatureInside = false;
+//                }
+//            }
+//        });
+    }
 
+    private void initToolbar() {
+        toolbar = findViewById(R.id.toolbar);
+        toolbar.setTitle("Welcome");
+        toolbar.setOnMenuItemClickListener(new Toolbar.OnMenuItemClickListener() {
             @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                if (isChecked) {
-                    //Рассылка уведомлений о получений данных о погоде установлена
-                    Notify.getDataTemperatureInside = true;
-                    Notify.mContext = getApplicationContext();
-//                    Toast.makeText(getApplicationContext(), "Уведомления установлено!", Toast.LENGTH_SHORT).show();
-                } else {
-                    //Рассылка уведомлений о получении данных о погоде установлена
-                    Notify.getDataTemperatureInside = false;
-//                    Toast.makeText(getApplicationContext(), "Уведомление отключено!", Toast.LENGTH_SHORT).show();
-                }
+            public boolean onMenuItemClick(MenuItem menuItem) {
+                return false;
             }
         });
+
+        toolbar.inflateMenu(R.menu.menu);
     }
 
     @Override
