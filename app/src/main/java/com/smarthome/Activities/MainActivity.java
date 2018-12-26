@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        setTheme(R.style.AppDefault);
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
          Log.d(LOG_TAG,"MainActivity: onCreate()");
@@ -64,7 +65,7 @@ public class MainActivity extends AppCompatActivity {
         mSettings = getSharedPreferences(APP_PREFERENCES_SWITCH_TEMPERATURE, Context.MODE_PRIVATE);
 
         //Инициализация элементов activity_main
-        //switch_temp = findViewById(R.id.switch_Temperature);
+//        switch_temp = findViewById(R.id.switch_Temperature);
 
         // добавляем слушателя переключателя
 //        switch_temp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
