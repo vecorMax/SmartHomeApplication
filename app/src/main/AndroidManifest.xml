@@ -19,7 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Activities.MainActivity">
+        <activity android:name=".Activities.CActivityMain">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -34,7 +34,7 @@
 
         </service>
 
-        <activity android:name=".Activities.LoginActivity">
+        <activity android:name=".Activities.CActivityLogin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
