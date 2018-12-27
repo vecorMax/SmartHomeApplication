@@ -1,7 +1,6 @@
 package com.smarthome.Activities;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
@@ -10,7 +9,9 @@ import android.widget.Toast;
 
 import com.smarthome.R;
 
-public class LoginActivity extends AppCompatActivity {
+import androidx.appcompat.app.AppCompatActivity;
+
+public class CActivityLogin extends AppCompatActivity {
 
     Button btn;
     EditText usr, psd;
@@ -30,7 +31,7 @@ public class LoginActivity extends AppCompatActivity {
                 if (usr.getText().toString().equals("Admin") && psd.getText().toString().equals("Admin"))
                 {
                     Toast.makeText(getApplicationContext(),"Login Success",Toast.LENGTH_LONG);
-                    Intent mainIntent = new Intent(LoginActivity.this, MainActivity.class);
+                    Intent mainIntent = new Intent(CActivityLogin.this, CActivityMain.class);
                     startActivity(mainIntent);
                 }
             }

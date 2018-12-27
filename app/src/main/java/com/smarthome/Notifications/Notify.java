@@ -3,9 +3,10 @@ package com.smarthome.Notifications;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
-import android.support.v4.app.NotificationCompat;
 
 import com.smarthome.R;
+
+import androidx.core.app.NotificationCompat;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
