@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.content.Intent;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.Switch;
-import android.widget.Toolbar;
 
 import com.smarthome.R;
 import com.smarthome.Services.ServiceNotify;
@@ -24,10 +24,12 @@ public class CActivityMain extends AppCompatActivity {
     private SharedPreferences mSettings;
 
     private static final int LAYOUT = R.layout.activity_main;
+    private static final int STYLE = R.style.AppDefault;
+    private static final int MENU_MAIN = R.menu.activity_main;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        setTheme(R.style.AppDefault);
+        setTheme(STYLE);
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT);
         Log.d(LOG_TAG, "MainActivity: onCreate()");
@@ -68,12 +70,6 @@ public class CActivityMain extends AppCompatActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(true);
             getSupportActionBar().setTitle("Welcome");
         }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.activity_main, menu);
-        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -130,6 +126,40 @@ public class CActivityMain extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         Log.d(LOG_TAG,"MainActivity: onDestroy()");
+    }
+
+    /****************************************************************************************************
+     * Действия при создании меню.                                                                      *
+     * @param menu - заготовка для меню.                                                                *
+     * @return                                                                                          *
+     ***************************************************************************************************/
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater inflater               = getMenuInflater();
+        inflater.inflate(MENU_MAIN, menu);
+        return true;
+    }
+    /****************************************************************************************************
+     * Обработка нажатий на элемент меню.                                                               *
+     * @param item - элемент меню, на который нажал пользователь.                                       *
+     * @return                                                                                          *
+     ***************************************************************************************************/
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        // Handle item selection
+        switch (item.getItemId())
+        {
+            case R.id.search:
+
+                return true;
+//            case R.id.help:
+//                showHelp();
+//                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
     }
 
 }

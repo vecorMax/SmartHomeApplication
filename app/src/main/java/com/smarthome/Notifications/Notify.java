@@ -14,6 +14,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class Notify
 {
+    private static final int TEMP_INSIDE = R.mipmap.ic_temperature_inside;
     public static Context mContext;
     public static boolean getDataTemperatureInside; //создавать/не создавать уведомления по температуре состоянию switch
 
@@ -32,7 +33,7 @@ public class Notify
     {
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.mipmap.ic_temperature_inside)
+                        .setSmallIcon(TEMP_INSIDE)
                         .setContentTitle(title)
                         .setContentText(notifyText);
 
