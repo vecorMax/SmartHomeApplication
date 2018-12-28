@@ -4,8 +4,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
 
-import com.smarthome.R;
-
 import androidx.core.app.NotificationCompat;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
@@ -16,15 +14,6 @@ public class Notify
 {
     private static final int TEMP_INSIDE = R.mipmap.ic_temperature_inside;
     public static Context mContext;
-    public static boolean getDataTemperatureInside; //создавать/не создавать уведомления по температуре состоянию switch
-
-    public static void createNotificationTemperature()
-    {
-        if (getDataTemperatureInside)
-        {
-
-        }
-    }
 
     /*
     Построитель уведомлений

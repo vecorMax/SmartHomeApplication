@@ -13,10 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class CActivityLogin extends AppCompatActivity {
 
-    private static final int LAYOUT             = R.layout.activity_login;
-    private static final int USERNAME           = R.id.etUserName;
-    private static final int PASSWORD           = R.id.etPassword;
-    private static final int ENTRY              = R.id.btnEntry;
+    private static final int LAYOUT = R.layout.activity_login;
 
     Button btn;
     EditText usr, psd;
@@ -25,9 +22,10 @@ public class CActivityLogin extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT);
-        usr                                     = findViewById(USERNAME);
-        psd                                     = findViewById(PASSWORD);
-        btn                                     = findViewById(ENTRY);
+
+        usr = findViewById(R.id.etUserName);
+        psd = findViewById(R.id.etPassword);
+        btn = findViewById(R.id.btnEntry);
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
