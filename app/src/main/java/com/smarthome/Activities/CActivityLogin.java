@@ -13,13 +13,15 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class CActivityLogin extends AppCompatActivity {
 
+    private static final int LAYOUT = R.layout.activity_login;
+
     Button btn;
     EditText usr, psd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(LAYOUT);
 
         usr = findViewById(R.id.etUserName);
         psd = findViewById(R.id.etPassword);

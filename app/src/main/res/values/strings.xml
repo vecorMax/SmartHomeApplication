@@ -18,4 +18,6 @@
     <string name="Auth">Authorization</string>
     <string name="password">Password:</string>
     <string name="search_title">Search</string>
+    <string name="logout">Выход из учетной записи</string>
+    <string name="notify_user">Уведомления</string>
 </resources>
