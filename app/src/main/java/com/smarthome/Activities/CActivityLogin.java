@@ -29,11 +29,9 @@ public class CActivityLogin extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT);
 
-        cSharedPreferences = new CSharedPreferences(getApplicationContext());
+        cSharedPreferences                              = new CSharedPreferences(getApplicationContext());
 
-        usr                                             = findViewById(USERNAME);
-        psd                                             = findViewById(PASSWORD);
-        btn                                             = findViewById(ENTRY);
+       init();
 
         if (cSharedPreferences.readLoginStatus()){
             startActivity(new Intent(this,CActivityMain.class));
@@ -45,7 +43,6 @@ public class CActivityLogin extends AppCompatActivity {
             public void onClick(View v) {
                 if (usr.getText().toString().equals("Admin") && psd.getText().toString().equals("Admin"))
                 {
-                    Toast.makeText(getApplicationContext(),"Login Success",Toast.LENGTH_LONG);
                     Intent mainIntent = new Intent(CActivityLogin.this, CActivityMain.class);
                     startActivity(mainIntent);
                     cSharedPreferences.writeLoginStatus(true);
@@ -53,6 +50,17 @@ public class CActivityLogin extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    /****************************************************************************************************
+     * Инициализация элементов CActivityLogin                                                           *
+     * @param item - элемент меню, на который нажал пользователь.                                       *
+     * @return                                                                                          *
+     ***************************************************************************************************/
+    public void init(){
+        usr                                             = findViewById(USERNAME);
+        psd                                             = findViewById(PASSWORD);
+        btn                                             = findViewById(ENTRY);
     }
 }
 

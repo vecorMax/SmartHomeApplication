@@ -11,16 +11,19 @@ import android.view.MenuItem;
 import android.widget.Button;
 import android.widget.Switch;
 
+import com.google.android.material.navigation.NavigationView;
 import com.google.android.material.tabs.TabLayout;
 import com.smarthome.R;
 import com.smarthome.Utils.CSharedPreferences;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-public class CActivityMain extends AppCompatActivity {
+public class CActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String LOG_TAG                 = "status";
     private static final int LAYOUT                     = R.layout.activity_main;
@@ -30,6 +33,7 @@ public class CActivityMain extends AppCompatActivity {
     private static final int SEARCH                     = R.id.search;
     private static final int DRAW_LAYOUT                = R.id.drawerLayout;
     private static final int MENU_NAVI                  = R.menu.menu_navigation;
+    private static final int NAVI_VIEW                  = R.id.navigation;
 
 
     public Switch switch_temp;
@@ -38,6 +42,7 @@ public class CActivityMain extends AppCompatActivity {
 
     private SharedPreferences mSettings;
     private DrawerLayout drawerLayout;
+    private NavigationView navigationView;
 
     private CSharedPreferences cSharedPreferences;
 
@@ -50,15 +55,17 @@ public class CActivityMain extends AppCompatActivity {
         Log.d(LOG_TAG, "MainActivity: onCreate()");
 
 
-        cSharedPreferences = new CSharedPreferences(getApplicationContext());
+        cSharedPreferences                                  = new CSharedPreferences(getApplicationContext());
         initToolbar();
         initNavigationView();
+        navigationView                                      = findViewById(R.id.navigation);
+        navigationView.setNavigationItemSelectedListener(this);
 
         //запускаем сервис по получению сообщений от сервера CNats при наличии интернета
         //startService(new Intent(this, CServiceNotification.class));
 
         // экземпляр класса SharedPreferences, который отвечает за работу с настройками
-        mSettings = getSharedPreferences(APP_PREFERENCES_SWITCH_TEMPERATURE, Context.MODE_PRIVATE);
+        //mSettings = getSharedPreferences(APP_PREFERENCES_SWITCH_TEMPERATURE, Context.MODE_PRIVATE);
 
         //Инициализация элементов activity_main
 //        switch_temp = findViewById(R.id.switch_Temperature);
@@ -78,6 +85,7 @@ public class CActivityMain extends AppCompatActivity {
 //                }
 //            }
 //        });
+
     }
 
     private void initNavigationView() {
@@ -87,7 +95,7 @@ public class CActivityMain extends AppCompatActivity {
     private void initToolbar() {
         Toolbar toolbar                     = findViewById(TOOLBAR);
         setSupportActionBar(toolbar);
-        if (getSupportActionBar()!=null)
+        if (getSupportActionBar()!= null)
         {
             getSupportActionBar().setDisplayShowTitleEnabled(true);
             getSupportActionBar().setTitle("Welcome");
@@ -98,31 +106,30 @@ public class CActivityMain extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.d(LOG_TAG,"MainActivity: onResume()");
-        if (mSettings.contains(APP_PREFERENCES_COUNTER_SWITCH_TEMPERATURE)) {
-            // Получаем данные из настроек
-            switch_temp.setChecked(mSettings.getBoolean(APP_PREFERENCES_COUNTER_SWITCH_TEMPERATURE, false));
-        }
+//        if (mSettings.contains(APP_PREFERENCES_COUNTER_SWITCH_TEMPERATURE)) {
+//            // Получаем данные из настроек
+//            switch_temp.setChecked(mSettings.getBoolean(APP_PREFERENCES_COUNTER_SWITCH_TEMPERATURE, false));
+//        }
     }
 
     @Override
     protected void onPause() {
         super.onPause();
         Log.d(LOG_TAG,"MainActivity: onPause()");
-        // Запоминаем данные
-        SharedPreferences.Editor editor = mSettings.edit();
-        editor.putBoolean(APP_PREFERENCES_COUNTER_SWITCH_TEMPERATURE, switch_temp.isChecked());
-        editor.apply();
+//        SharedPreferences.Editor editor = mSettings.edit();
+//        editor.putBoolean(APP_PREFERENCES_COUNTER_SWITCH_TEMPERATURE, switch_temp.isChecked());
+//        editor.apply();
     }
 
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        switch_temp.setChecked(savedInstanceState.getBoolean("switch"));
+        //switch_temp.setChecked(savedInstanceState.getBoolean("switch"));
         Log.d(LOG_TAG, "MainActivity: onRestoreInstanceState()");
     }
 
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean("switch",switch_temp.isChecked());
+        //outState.putBoolean("switch",switch_temp.isChecked());
         Log.d(LOG_TAG, "MainActivity: onSaveInstanceState()");
     }
 
@@ -150,18 +157,18 @@ public class CActivityMain extends AppCompatActivity {
         Log.d(LOG_TAG,"MainActivity: onDestroy()");
     }
 
-    /****************************************************************************************************
-     * Действия при создании меню.                                                                      *
-     * @param menu - заготовка для меню.                                                                *
-     * @return                                                                                          *
-     ***************************************************************************************************/
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu)
-    {
-        MenuInflater inflater               = getMenuInflater();
-        inflater.inflate(MENU_MAIN, menu);
-        return true;
-    }
+//    /****************************************************************************************************
+//     * Действия при создании меню.                                                                      *
+//     * @param menu - заготовка для меню.                                                                *
+//     * @return                                                                                          *
+//     ***************************************************************************************************/
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu)
+//    {
+//        MenuInflater inflater               = getMenuInflater();
+//        inflater.inflate(MENU_MAIN, menu);
+//        return true;
+//    }
 
     /****************************************************************************************************
      * Обработка нажатий на элемент меню.                                                               *
@@ -178,10 +185,8 @@ public class CActivityMain extends AppCompatActivity {
                 userLogOut();
                 return true;
             case R.id.Settings:
-
                 return true;
             case R.id.Notify:
-
                 return true;
             default:
                 return super.onOptionsItemSelected(item);
@@ -199,4 +204,26 @@ public class CActivityMain extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public boolean onNavigationItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        int id = item.getItemId();
+
+        if (id ==  R.id.Logout) {
+            // Handle logout of application
+            userLogOut();
+        }
+
+        drawerLayout.closeDrawer(GravityCompat.START);
+        return true;
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

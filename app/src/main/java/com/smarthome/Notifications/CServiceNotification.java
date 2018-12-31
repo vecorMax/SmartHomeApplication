@@ -38,12 +38,6 @@ public class CServiceNotification extends Service {
         return super.onStartCommand(intent, flags, startId);
     }
 
-    /*
-    Возвращает значение статуса сети
-    0 - Соединение не установлено
-    1 - Соединение установлено по сети WiFi
-    2 - Соединение устаноавлено по мобильной сети Интернет
-     */
     public int stateNetwork() {
         return CCheckNetworkState.getConnectivityStatus(getApplicationContext());
     }
