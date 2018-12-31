@@ -8,13 +8,17 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.widget.Button;
 import android.widget.Switch;
 
+import com.google.android.material.tabs.TabLayout;
 import com.smarthome.R;
-import com.smarthome.Services.ServiceNotify;
+import com.smarthome.Utils.CSharedPreferences;
+
 import androidx.appcompat.widget.Toolbar;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.drawerlayout.widget.DrawerLayout;
 
 public class CActivityMain extends AppCompatActivity {
 
@@ -24,13 +28,18 @@ public class CActivityMain extends AppCompatActivity {
     private static final int TOOLBAR                    = R.id.toolbar;
     private static final int MENU_MAIN                  = R.menu.activity_main;
     private static final int SEARCH                     = R.id.search;
+    private static final int DRAW_LAYOUT                = R.id.drawerLayout;
+    private static final int MENU_NAVI                  = R.menu.menu_navigation;
 
 
     public Switch switch_temp;
     public static final String APP_PREFERENCES_SWITCH_TEMPERATURE = "settings";
     public static final String APP_PREFERENCES_COUNTER_SWITCH_TEMPERATURE = "switch_temp";
-    private SharedPreferences mSettings;
 
+    private SharedPreferences mSettings;
+    private DrawerLayout drawerLayout;
+
+    private CSharedPreferences cSharedPreferences;
 
 
     @Override
@@ -40,10 +49,13 @@ public class CActivityMain extends AppCompatActivity {
         setContentView(LAYOUT);
         Log.d(LOG_TAG, "MainActivity: onCreate()");
 
-        initToolbar();
 
-        //запускаем сервис по получению сообщений от сервера NATS при наличии интернета
-        startService(new Intent(this, ServiceNotify.class));
+        cSharedPreferences = new CSharedPreferences(getApplicationContext());
+        initToolbar();
+        initNavigationView();
+
+        //запускаем сервис по получению сообщений от сервера CNats при наличии интернета
+        //startService(new Intent(this, CServiceNotification.class));
 
         // экземпляр класса SharedPreferences, который отвечает за работу с настройками
         mSettings = getSharedPreferences(APP_PREFERENCES_SWITCH_TEMPERATURE, Context.MODE_PRIVATE);
@@ -58,14 +70,18 @@ public class CActivityMain extends AppCompatActivity {
 //            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 //                if (isChecked) {
 //                    //Рассылка уведомлений о получений данных о погоде установлена
-//                    Notify.getDataTemperatureInside = true;
-//                    Notify.mContext = getApplicationContext();
+//                    CNotifications.getDataTemperatureInside = true;
+//                    CNotifications.mContext = getApplicationContext();
 //                } else {
 //                    //Рассылка уведомлений о получении данных о погоде установлена
-//                    Notify.getDataTemperatureInside = false;
+//                    CNotifications.getDataTemperatureInside = false;
 //                }
 //            }
 //        });
+    }
+
+    private void initNavigationView() {
+        drawerLayout = findViewById(DRAW_LAYOUT);
     }
 
     private void initToolbar() {
@@ -146,6 +162,7 @@ public class CActivityMain extends AppCompatActivity {
         inflater.inflate(MENU_MAIN, menu);
         return true;
     }
+
     /****************************************************************************************************
      * Обработка нажатий на элемент меню.                                                               *
      * @param item - элемент меню, на который нажал пользователь.                                       *
@@ -157,15 +174,29 @@ public class CActivityMain extends AppCompatActivity {
         // Handle item selection
         switch (item.getItemId())
         {
-            case SEARCH:
+            case R.id.Logout:
+                userLogOut();
+                return true;
+            case R.id.Settings:
 
                 return true;
-//            case R.id.help:
-//                showHelp();
-//                return true;
+            case R.id.Notify:
+
+                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    /****************************************************************************************************
+     * Выход из учетной записи пользователя                                                             *
+     * @param                                                                                           *
+     * @return                                                                                          *
+     ***************************************************************************************************/
+    public void userLogOut() {
+        cSharedPreferences.writeLoginStatus(false);
+        startActivity(new Intent(this,CActivityLogin.class));
+        finish();
     }
 
 }

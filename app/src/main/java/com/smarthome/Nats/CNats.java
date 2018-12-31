@@ -1,18 +1,17 @@
-package com.smarthome;
+package com.smarthome.Nats;
 
-import com.smarthome.Notifications.Notify;
+import com.smarthome.Notifications.CNotifications;
 
 import java.io.IOException;
 
 import io.nats.client.Connection;
 import io.nats.client.Message;
 import io.nats.client.Nats;
-import io.nats.client.Statistics;
 import io.nats.client.SyncSubscription;
 
-public class NATS extends Thread {
+public class CNats extends Thread {
 
-    public static NATS mNats; //объект класса NATS для подключение к серверу на плате RaspberryPi 3
+    public static CNats mCNats; //объект класса CNats для подключение к серверу на плате RaspberryPi 3
     public static Connection natsConnection;
     public static SyncSubscription natsSubscription1;
     public static SyncSubscription natsSubscription2;
@@ -41,13 +40,13 @@ public class NATS extends Thread {
                 byte[] data = message1.getData();
                 String str = new String(data, "UTF-8");
                 System.out.print(str);
-                Notify.notifyBuilder(str,"Температура в помещении 1");
+                CNotifications.notifyBuilder(str,"Температура в помещении 1");
             }
             else if (message2 != null) {
                 byte[] data = message2.getData();
                 String str = new String(data, "UTF-8");
                 System.out.print(str);
-                Notify.notifyBuilder(str,"Temperature in Room 1 is changed");
+                CNotifications.notifyBuilder(str,"Temperature in Room 1 is changed");
             }
         }
     }
@@ -62,25 +61,25 @@ public class NATS extends Thread {
     }
 
     /*
-   Устанавливает соединение с сервером NATS при наличии любого интернета на устройстве
+   Устанавливает соединение с сервером CNats при наличии любого интернета на устройстве
     */
     public static void createConnectionNATSServer(int status)
     {
         if (status == 1 || status == 2)
         {
-            if (mNats == null || mNats.getState() == Thread.State.TERMINATED)
+            if (mCNats == null || mCNats.getState() == Thread.State.TERMINATED)
             {
-                mNats = new NATS();
-                mNats.start();
+                mCNats = new CNats();
+                mCNats.start();
             }
         }
         else
         {
-            if (mNats != null)
+            if (mCNats != null)
             {
                 finish();
                 try {
-                    mNats.join();
+                    mCNats.join();
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
@@ -89,15 +88,15 @@ public class NATS extends Thread {
     }
 
     /*
-    Закрываем соединение с сервером NATS при завершение работы сервиса
+    Закрываем соединение с сервером CNats при завершение работы сервиса
      */
     public static void closeConnectionNATSServer()
     {
-        if (mNats != null)
+        if (mCNats != null)
         {
             finish();
             try {
-                mNats.join();
+                mCNats.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

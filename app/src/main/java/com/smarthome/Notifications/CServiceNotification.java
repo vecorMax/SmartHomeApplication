@@ -1,15 +1,14 @@
-package com.smarthome.Services;
+package com.smarthome.Notifications;
 
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.smarthome.NATS;
-import com.smarthome.Utils.checkNetworkState;
+import com.smarthome.Nats.CNats;
+import com.smarthome.Utils.CCheckNetworkState;
 
-public class ServiceNotify extends Service {
+public class CServiceNotification extends Service {
 
     final String LOG_TAG = "status"; //логирование
     public static int connState; //статус сети Интернет на устройстве
@@ -17,25 +16,25 @@ public class ServiceNotify extends Service {
 
     public void onCreate() {
         super.onCreate();
-        Log.d(LOG_TAG, "ServiceNotify: onCreate()");
+        Log.d(LOG_TAG, "CServiceNotification: onCreate()");
     }
 
     public void onDestroy() {
         super.onDestroy();
-        NATS.closeConnectionNATSServer();
-        Log.d(LOG_TAG, "ServiceNotify: onDestroy()");
+        CNats.closeConnectionNATSServer();
+        Log.d(LOG_TAG, "CServiceNotification: onDestroy()");
     }
 
     @Override
     public IBinder onBind(Intent intent) {
-        Log.d(LOG_TAG, "ServiceNotify: onBind()");
+        Log.d(LOG_TAG, "CServiceNotification: onBind()");
         return null;
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d(LOG_TAG, "ServiceNotify: onStartCommand()");
+        Log.d(LOG_TAG, "CServiceNotification: onStartCommand()");
         connState = stateNetwork();
-        NATS.createConnectionNATSServer(connState);
+        CNats.createConnectionNATSServer(connState);
         return super.onStartCommand(intent, flags, startId);
     }
 
@@ -46,7 +45,7 @@ public class ServiceNotify extends Service {
     2 - Соединение устаноавлено по мобильной сети Интернет
      */
     public int stateNetwork() {
-        return checkNetworkState.getConnectivityStatus(getApplicationContext());
+        return CCheckNetworkState.getConnectivityStatus(getApplicationContext());
     }
 
 }

@@ -4,7 +4,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 
-public class checkNetworkState
+public class CCheckNetworkState
 {
     private static final int TYPE_NOT_CONNECTED = 0;
     private static final int TYPE_WIFI = 1;
@@ -28,14 +28,12 @@ public class checkNetworkState
     }
 
     public static int getConnectivityStatusString(Context context) {
-        int conn = checkNetworkState.getConnectivityStatus(context);
+        int conn = CCheckNetworkState.getConnectivityStatus(context);
         int status = 0;
-        if (conn == checkNetworkState.TYPE_WIFI) {
+        if (conn == CCheckNetworkState.TYPE_WIFI) {
             status = NETWORK_STATUS_WIFI;
-        } else if (conn == checkNetworkState.TYPE_MOBILE) {
+        } else if (conn == CCheckNetworkState.TYPE_MOBILE) {
             status = NETWORK_STATUS_MOBILE;
-        } else if (conn == checkNetworkState.TYPE_NOT_CONNECTED) {
-            status = NETWORK_STATUS_NOT_CONNECTED;
         }
         return status;
     }

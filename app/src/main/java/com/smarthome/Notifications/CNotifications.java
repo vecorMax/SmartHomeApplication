@@ -12,7 +12,7 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 
 
 
-public class Notify
+public class CNotifications
 {
     private static final int TEMP_INSIDE                            = R.mipmap.ic_temperature_inside;
     public static Context mContext;

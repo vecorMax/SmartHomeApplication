@@ -18,6 +18,9 @@
     <string name="Auth">Authorization</string>
     <string name="password">Password:</string>
     <string name="search_title">Search</string>
-    <string name="logout">Выход из учетной записи</string>
-    <string name="notify_user">Уведомления</string>
+    <string name="logout">Logout</string>
+    <string name="notify_user">Notifications</string>
+    <string name="settings">Settings</string>
+    <string name="login_preference">com.smarthome_login_preference</string>
+    <string name="login_status_preferences">com.smarthome_login_status_preferences</string>
 </resources>
