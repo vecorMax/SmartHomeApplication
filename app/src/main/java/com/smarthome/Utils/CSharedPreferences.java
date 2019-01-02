@@ -3,8 +3,6 @@ package com.smarthome.Utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-import com.smarthome.R;
-
 public class CSharedPreferences {
 
     private static final int PRIVATE = Context.MODE_PRIVATE;
@@ -12,21 +10,22 @@ public class CSharedPreferences {
     private SharedPreferences sharedPreferences;
     private Context context;
 
-    public CSharedPreferences(Context context)
+    public CSharedPreferences(Context context, int param)
     {
         this.context = context;
-        sharedPreferences = context.getSharedPreferences(context.getResources().getString(R.string.login_preference), PRIVATE);
+        sharedPreferences = context.getSharedPreferences(context.getResources().getString(param), PRIVATE);
     }
 
-    public void writeLoginStatus(boolean status){
+    public void writeData(boolean status, int param){
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putBoolean(context.getResources().getString(R.string.login_status_preferences), status);
-        editor.commit();
+        editor.putBoolean(context.getResources().getString(param), status).apply();
     }
 
-    public boolean readLoginStatus(){
+    public boolean readData(int param){
         boolean status = false;
-        status = sharedPreferences.getBoolean(context.getResources().getString(R.string.login_status_preferences), false);
+        status = sharedPreferences.getBoolean(context.getResources().getString(param), false);
         return status;
     }
+
+    
 }

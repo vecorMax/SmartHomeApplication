@@ -21,6 +21,11 @@
     <string name="logout">Logout</string>
     <string name="notify_user">Notifications</string>
     <string name="settings">Settings</string>
-    <string name="login_preference">com.smarthome_login_preference</string>
-    <string name="login_status_preferences">com.smarthome_login_status_preferences</string>
+    <string name="home_page">Home</string>
+
+    //Настройки SharedPreferences
+    <string name="login_preference">Login Preference</string>
+    <string name="login_status_preferences">Login Status Preference</string>
+    <string name="notify_temperature">Температура</string>
+
 </resources>

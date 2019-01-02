@@ -10,9 +10,7 @@ import com.smarthome.Utils.CCheckNetworkState;
 
 public class CServiceNotification extends Service {
 
-    final String LOG_TAG = "status"; //логирование
-    public static int connState; //статус сети Интернет на устройстве
-
+    private final String LOG_TAG = "status"; //логирование
 
     public void onCreate() {
         super.onCreate();
@@ -21,7 +19,6 @@ public class CServiceNotification extends Service {
 
     public void onDestroy() {
         super.onDestroy();
-        CNats.closeConnectionNATSServer();
         Log.d(LOG_TAG, "CServiceNotification: onDestroy()");
     }
 
@@ -33,13 +30,7 @@ public class CServiceNotification extends Service {
 
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d(LOG_TAG, "CServiceNotification: onStartCommand()");
-        connState = stateNetwork();
-        CNats.createConnectionNATSServer(connState);
         return super.onStartCommand(intent, flags, startId);
-    }
-
-    public int stateNetwork() {
-        return CCheckNetworkState.getConnectivityStatus(getApplicationContext());
     }
 
 }

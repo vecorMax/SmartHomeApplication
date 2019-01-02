@@ -12,12 +12,15 @@ import com.smarthome.Utils.CSharedPreferences;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import static com.smarthome.R.string.login_preference;
+import static com.smarthome.R.string.login_status_preferences;
+
 public class CActivityLogin extends AppCompatActivity {
 
-    private static final int LAYOUT = R.layout.activity_login;
-    private static final int USERNAME = R.id.etUserName;
-    private static final int PASSWORD = R.id.etPassword;
-    private static final int ENTRY = R.id.btnEntry;
+    private static final int LAYOUT                         = R.layout.activity_login;
+    private static final int USERNAME                       = R.id.etUserName;
+    private static final int PASSWORD                       = R.id.etPassword;
+    private static final int ENTRY                          = R.id.btnEntry;
 
     private CSharedPreferences cSharedPreferences;
 
@@ -29,23 +32,22 @@ public class CActivityLogin extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT);
 
-        cSharedPreferences                              = new CSharedPreferences(getApplicationContext());
+        cSharedPreferences                                  = new CSharedPreferences(getApplicationContext(), login_preference);
 
-       init();
+        init();
 
-        if (cSharedPreferences.readLoginStatus()){
-            startActivity(new Intent(this,CActivityMain.class));
+        if (cSharedPreferences.readData(login_status_preferences)) {
+            startActivity(new Intent(this, CActivityMain.class));
             finish();
         }
 
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (usr.getText().toString().equals("Admin") && psd.getText().toString().equals("Admin"))
-                {
-                    Intent mainIntent = new Intent(CActivityLogin.this, CActivityMain.class);
+                if (usr.getText().toString().equals("Admin") && psd.getText().toString().equals("Admin")) {
+                    Intent mainIntent                       = new Intent(CActivityLogin.this, CActivityMain.class);
                     startActivity(mainIntent);
-                    cSharedPreferences.writeLoginStatus(true);
+                    cSharedPreferences.writeData(true, login_status_preferences);
                     finish();
                 }
             }
@@ -54,13 +56,13 @@ public class CActivityLogin extends AppCompatActivity {
 
     /****************************************************************************************************
      * Инициализация элементов CActivityLogin                                                           *
-     * @param item - элемент меню, на который нажал пользователь.                                       *
+     * @param                                                                                           *
      * @return                                                                                          *
      ***************************************************************************************************/
-    public void init(){
-        usr                                             = findViewById(USERNAME);
-        psd                                             = findViewById(PASSWORD);
-        btn                                             = findViewById(ENTRY);
+    public void init() {
+        usr                                                 = findViewById(USERNAME);
+        psd                                                 = findViewById(PASSWORD);
+        btn                                                 = findViewById(ENTRY);
     }
 }
 
