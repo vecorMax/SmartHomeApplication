@@ -7,6 +7,7 @@ import android.view.MenuItem;
 
 import com.google.android.material.navigation.NavigationView;
 import com.smarthome.Nats.CNats;
+import com.smarthome.Notifications.CNotifications;
 import com.smarthome.R;
 import com.smarthome.Utils.CSharedPreferences;
 
@@ -48,6 +49,8 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
         init();
         initToolbar();
         initNATS();
+
+        CNotifications.mContext = getApplicationContext();
 
 
         //запускаем сервис по получению сообщений от сервера CNats при наличии интернета

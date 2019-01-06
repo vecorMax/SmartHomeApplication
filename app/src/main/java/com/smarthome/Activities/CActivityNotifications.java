@@ -11,6 +11,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -49,9 +50,20 @@ public class CActivityNotifications extends AppCompatActivity implements Navigat
     private void init() {
         drawerLayout                                        = findViewById(DRAW_LAYOUT);
         navigationView                                      = findViewById(NAVI_VIEW);
-        navigationView.setNavigationItemSelectedListener(this);
         txtTemp                                             = findViewById(TXTTEMP);
         swtTemp                                             = findViewById(SWTTEMP);
+
+        navigationView.setNavigationItemSelectedListener(this);
+        swtTemp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    //Рассылка уведомлений о получений данных о погоде установлена
+                } else {
+                    //Рассылка уведомлений о получении данных о погоде установлена
+                }
+            }
+        });
     }
 
     private void initToolbar() {

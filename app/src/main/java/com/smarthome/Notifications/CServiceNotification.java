@@ -8,6 +8,9 @@ import android.util.Log;
 import com.smarthome.Nats.CNats;
 import com.smarthome.Utils.CCheckNetworkState;
 
+/**
+ * Сервис по предоставлению уведомлений пользователю из CActivityNotifications
+ */
 public class CServiceNotification extends Service {
 
     private final String LOG_TAG = "status"; //логирование

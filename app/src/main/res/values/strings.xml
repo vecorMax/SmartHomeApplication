@@ -26,6 +26,6 @@
     //Настройки SharedPreferences
     <string name="login_preference">Login Preference</string>
     <string name="login_status_preferences">Login Status Preference</string>
-    <string name="notify_temperature">Температура</string>
+    <string name="notify_temperature">Get data about changes in temperature</string>
 
 </resources>

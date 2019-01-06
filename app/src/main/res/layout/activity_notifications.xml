@@ -38,12 +38,14 @@
                         android:gravity="center"
                         android:layout_height="?attr/actionBarSize"
                         android:text="@string/notify_temperature"/>
+
                     <Switch
                         android:id="@+id/switchTemperature"
+                        android:layout_weight="10"
                         android:gravity="center"
-                        android:layout_gravity="center"
-                        android:layout_height="?attr/actionBarSize"
-                        android:layout_weight="10" />
+                        android:layout_height="match_parent"
+                        android:layout_width="match_parent"
+                        />
                 </TableRow>
 
             </TableLayout>

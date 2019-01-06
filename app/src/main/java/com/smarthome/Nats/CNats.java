@@ -1,5 +1,7 @@
 package com.smarthome.Nats;
 
+import android.app.Application;
+
 import com.smarthome.Notifications.CNotifications;
 
 import java.io.IOException;
@@ -56,6 +58,7 @@ public class CNats extends Thread {
             {
                 String str = new String(message2.getData(), StandardCharsets.UTF_8);
                 System.out.print(str);
+                CNotifications.createNotification(str,"Temperature in room has changed");
             }
         }
     }

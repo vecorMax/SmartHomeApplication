@@ -6,12 +6,12 @@ import android.net.NetworkInfo;
 
 public class CCheckNetworkState
 {
-    private static final int TYPE_NOT_CONNECTED = 0;
-    private static final int TYPE_WIFI = 1;
-    private static final int TYPE_MOBILE = 2;
-    private static final int NETWORK_STATUS_NOT_CONNECTED = 0;
-    private static final int NETWORK_STATUS_WIFI = 1;
-    private static final int NETWORK_STATUS_MOBILE = 2;
+    private static final int TYPE_NOT_CONNECTED                         = 0;
+    private static final int TYPE_WIFI                                  = 1;
+    private static final int TYPE_MOBILE                                = 2;
+    private static final int NETWORK_STATUS_NOT_CONNECTED               = 0;
+    private static final int NETWORK_STATUS_WIFI                        = 1;
+    private static final int NETWORK_STATUS_MOBILE                      = 2;
 
     public static int getConnectivityStatus(Context context) {
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
