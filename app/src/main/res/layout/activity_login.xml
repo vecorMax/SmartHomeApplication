@@ -1,43 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/activity_finger_print"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
+    android:padding="24dp"
+    tools:context="com.smarthome.Activities.CActivityLogin">
 
-    <EditText
-        android:id="@+id/etUserName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/etPassword"
-        android:layout_alignParentTop="true"
-        android:layout_marginTop="0dp"
-        android:layout_marginEnd="-10dp"
-        android:ems="10"
-        android:hint="User Name"
-        android:inputType="textPersonName"
-        android:text="Admin" />
+    <ImageView
+        android:id="@+id/fingerprint_image"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:contentDescription="@string/app_name"
+        android:src="@drawable/ic_fp_40px"/>
 
-    <EditText
-        android:id="@+id/etPassword"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentEnd="true"
-        android:layout_marginTop="46dp"
-        android:layout_marginEnd="0dp"
-        android:ems="10"
-        android:hint="Password"
-        android:inputType="textPassword"
-        android:text="Admin" />
-
-    <Button
-        android:id="@+id/btnEntry"
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:layout_marginBottom="372dp"
-        android:text="Entry" />
+        android:textColor="@color/colorPrimaryDark"
+        android:text="@string/login_with_fingerprint"
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/_24sdp"/>
 
-</RelativeLayout>
+</LinearLayout>

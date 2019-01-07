@@ -5,35 +5,36 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
+    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
+
 
     <application
+        android:name=".Utils.CCustomApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_smart_home"
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-        <activity android:name=".Activities.CActivityMain">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-            </intent-filter>
-        </activity>
-
-        <service
-            android:name=".Notifications.CServiceNotification"
-            android:enabled="true"
-            android:exported="true"></service>
-
-        <activity android:name=".Activities.CActivityLogin">
+        <activity android:name=".Activities.CActivityStart">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.CActivityNotifications"></activity>
+        <activity android:name=".Activities.CActivityMain" />
+        <activity android:name=".Activities.CActivityLogin" />
+        <activity android:name=".Activities.CActivityNotifications" />
+
+
+        <service
+            android:name=".Notifications.CServiceNotification"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".Activities.CActivitySignUp"></activity>
     </application>
 
 </manifest>

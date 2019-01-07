@@ -27,5 +27,23 @@
     <string name="login_preference">Login Preference</string>
     <string name="login_status_preferences">Login Status Preference</string>
     <string name="notify_temperature">Get data about changes in temperature</string>
+    <string name="sign_in">sign in</string>
+    <string name="sign_up">sign up</string>
+    <string name="title_activity_csign_up">Sign in</string>
+    <string name="permission_refused">permission refused</string>
+    <string name="Unknown_permission_request">Unkhown permission request</string>
+    <string name="authenticate_fingerprint">Authenticate fingerprint</string>
+    <string name="auth_successful">Auth successful</string>
+    <string name="login_with_fingerprint">Login with fingerprint</string>
+    <string name="with_fingerprint_and_password">With fingerprint and password</string>
+    <string name="with_fingerprint">With fingerprint</string>
+    <string name="login_now">Login now</string>
+
+    <string name="phone_number_hint">Phone number</string>
+    <string name="address_hint">Address</string>
+    <string name="password_hint">Password</string>
+    <string name="email_hint">Email</string>
+    <string name="username_hint">Username</string>
+
 
 </resources>

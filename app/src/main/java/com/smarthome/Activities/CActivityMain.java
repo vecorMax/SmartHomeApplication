@@ -1,13 +1,19 @@
 package com.smarthome.Activities;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.content.Intent;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.smarthome.Nats.CNats;
 import com.smarthome.Notifications.CNotifications;
+import com.smarthome.Notifications.CServiceNotification;
 import com.smarthome.R;
 import com.smarthome.Utils.CSharedPreferences;
 
@@ -35,8 +41,8 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-
     private CSharedPreferences cSharedPreferences;
+
 
 
     @Override
@@ -48,13 +54,7 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
 
         init();
         initToolbar();
-        initNATS();
-
-        CNotifications.mContext = getApplicationContext();
-
-
-        //запускаем сервис по получению сообщений от сервера CNats при наличии интернета
-        //startService(new Intent(this, CServiceNotification.class));
+        //initNATS();
 
         // экземпляр класса SharedPreferences, который отвечает за работу с настройками
         //mSettings = getSharedPreferences(APP_PREFERENCES_SWITCH_TEMPERATURE, Context.MODE_PRIVATE);
@@ -83,7 +83,7 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
     /**
      * Подключение к серверу NATS при успешном входе в учетную запись пользователя
      */
-    private void initNATS() {
+    public static void initNATS() {
         if (mNats == null || mNats.getState() == Thread.State.TERMINATED) {
             mNats = new CNats();
             mNats.start();
@@ -95,8 +95,8 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
         drawerLayout                                        = findViewById(DRAW_LAYOUT);
         navigationView                                      = findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(this);
-    }
 
+    }
 
     private void initToolbar() {
         Toolbar toolbar                     = findViewById(TOOLBAR);
@@ -156,6 +156,7 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
      ***************************************************************************************************/
     public void userLogOut()  {
         cSharedPreferences.writeData(false, login_status_preferences);
+        stopService(new Intent(this,CNotifications.class));
         startActivity(new Intent(this, CActivityLogin.class));
         finish();
     }
