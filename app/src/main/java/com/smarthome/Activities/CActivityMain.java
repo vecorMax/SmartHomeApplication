@@ -15,6 +15,8 @@ import com.smarthome.Nats.CNats;
 import com.smarthome.Notifications.CNotifications;
 import com.smarthome.Notifications.CServiceNotification;
 import com.smarthome.R;
+import com.smarthome.Utils.CCustomApplication;
+import com.smarthome.Utils.CCustomSharedPreference;
 import com.smarthome.Utils.CSharedPreferences;
 
 import androidx.appcompat.widget.Toolbar;
@@ -26,6 +28,7 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import static com.smarthome.Nats.CNats.mNats;
 import static com.smarthome.R.string.login_preference;
 import static com.smarthome.R.string.login_status_preferences;
+import static com.smarthome.Utils.CCustomSharedPreference.setUserData;
 
 
 public class CActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -155,9 +158,11 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
      * @return                                                                                          *
      ***************************************************************************************************/
     public void userLogOut()  {
-        cSharedPreferences.writeData(false, login_status_preferences);
-        stopService(new Intent(this,CNotifications.class));
-        startActivity(new Intent(this, CActivityLogin.class));
+        //cSharedPreferences.writeData(false, login_status_preferences);
+        //stopService(new Intent(this,CNotifications.class));
+        CCustomSharedPreference pref            = ((CCustomApplication)getApplication()).getShared();
+        pref.setLoginData(false);
+        startActivity(new Intent(this, CActivityStart.class));
         finish();
     }
 

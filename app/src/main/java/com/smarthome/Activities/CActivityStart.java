@@ -12,6 +12,11 @@ import android.view.WindowManager;
 import android.widget.Button;
 
 import com.smarthome.R;
+import com.smarthome.Utils.CCustomApplication;
+import com.smarthome.Utils.CCustomSharedPreference;
+
+import static com.smarthome.Activities.CActivityLogin.mPref;
+import static com.smarthome.Utils.CCustomSharedPreference.getUserData;
 
 public class CActivityStart extends AppCompatActivity {
 
@@ -27,6 +32,8 @@ public class CActivityStart extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        mPref                                               = ((CCustomApplication)getApplication()).getShared();
 
         ActionBar actionBar                             = getSupportActionBar();
         if(null != actionBar){
@@ -50,5 +57,11 @@ public class CActivityStart extends AppCompatActivity {
                 startActivity(signInIntent);
             }
         });
+
+        if (mPref.getLoginData()){
+            Intent userIntent                               = new Intent(CActivityStart.this, CActivityMain.class);
+            startActivity(userIntent);
+            finish();
+        }
     }
 }
