@@ -93,7 +93,7 @@ public class CActivitySignUp extends AppCompatActivity {
                     String userDataString                   = gson.toJson(userData);
                     CCustomSharedPreference pref            = ((CCustomApplication)getApplication()).getShared();
                     pref.setUserData(userDataString);
-                    pref.setLoginData(true);
+                    //pref.setLoginData(true);
 
                     username.setText("");
                     email.setText("");

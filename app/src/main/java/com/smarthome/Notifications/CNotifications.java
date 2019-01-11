@@ -11,12 +11,8 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class CNotifications
 {
 
-    public static Context mContext;
 
-    public CNotifications() {
-    }
-
-    public static void createNotification(String title, String notifyText){
+    public static void createNotification(String title, String notifyText, Context mContext){
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(mContext)
                         .setSmallIcon(R.mipmap.ic_temperature_inside)

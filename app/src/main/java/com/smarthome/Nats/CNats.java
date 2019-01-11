@@ -1,6 +1,7 @@
 package com.smarthome.Nats;
 
 import android.app.Application;
+import android.content.Context;
 
 import com.smarthome.Notifications.CNotifications;
 
@@ -21,6 +22,11 @@ public class CNats extends Thread {
     public static Connection natsConnection;
     private static SyncSubscription natsSubs;
     private static SyncSubscription natsSubs2;
+    public static Context mContext;
+
+    public CNats(Context context){
+        this.mContext = context;
+    }
 
     @Override
     public void run() {
@@ -47,7 +53,7 @@ public class CNats extends Thread {
         while (true) {
 
             Message message1 = natsSubs.nextMessage(0);
-            Message message2 = natsSubs2.nextMessage(0);
+            Message message2 = natsSubs2.nextMessage(500);
 
             if (message1 != null)
             {
@@ -58,7 +64,7 @@ public class CNats extends Thread {
             {
                 String str = new String(message2.getData(), StandardCharsets.UTF_8);
                 System.out.print(str);
-                CNotifications.createNotification(str,"Temperature in room has changed");
+                CNotifications.createNotification(str,"Temperature in room has changed", mContext);
             }
         }
     }

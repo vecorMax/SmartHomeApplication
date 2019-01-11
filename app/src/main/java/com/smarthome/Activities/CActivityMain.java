@@ -1,23 +1,22 @@
 package com.smarthome.Activities;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.IntentFilter;
+import android.net.ConnectivityManager;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.content.Intent;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.smarthome.Nats.CNats;
 import com.smarthome.Notifications.CNotifications;
-import com.smarthome.Notifications.CServiceNotification;
 import com.smarthome.R;
+import com.smarthome.Utils.CBroadcastReceiver;
 import com.smarthome.Utils.CCustomApplication;
 import com.smarthome.Utils.CCustomSharedPreference;
-import com.smarthome.Utils.CSharedPreferences;
 
 import androidx.appcompat.widget.Toolbar;
 
@@ -25,10 +24,9 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+import static android.net.wifi.WifiManager.WIFI_STATE_CHANGED_ACTION;
 import static com.smarthome.Nats.CNats.mNats;
-import static com.smarthome.R.string.login_preference;
-import static com.smarthome.R.string.login_status_preferences;
-import static com.smarthome.Utils.CCustomSharedPreference.setUserData;
+import static com.smarthome.Nats.CNats.natsConnection;
 
 
 public class CActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
@@ -44,8 +42,8 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
-    private CSharedPreferences cSharedPreferences;
-
+   //private CSharedPreferences cSharedPreferences;
+   CBroadcastReceiver broadcastReceiver;
 
 
     @Override
@@ -57,7 +55,7 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
 
         init();
         initToolbar();
-        //initNATS();
+        //startNATS();
 
         // экземпляр класса SharedPreferences, который отвечает за работу с настройками
         //mSettings = getSharedPreferences(APP_PREFERENCES_SWITCH_TEMPERATURE, Context.MODE_PRIVATE);
@@ -83,21 +81,34 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
 
     }
 
-    /**
-     * Подключение к серверу NATS при успешном входе в учетную запись пользователя
-     */
-    public static void initNATS() {
+    public static void startNATS(Context context) {
         if (mNats == null || mNats.getState() == Thread.State.TERMINATED) {
-            mNats = new CNats();
+            mNats = new CNats(context);
             mNats.start();
         }
     }
 
+    public static void closeNATS(Context context){
+        if (mNats != null || mNats.getState() == Thread.State.RUNNABLE){
+            try {
+                natsConnection.close();
+                mNats.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
     private void init(){
-        cSharedPreferences                                  = new CSharedPreferences(getApplicationContext(), login_preference);
+        //cSharedPreferences                                  = new CSharedPreferences(getApplicationContext(), login_preference);
         drawerLayout                                        = findViewById(DRAW_LAYOUT);
         navigationView                                      = findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(this);
+        broadcastReceiver                                   = new CBroadcastReceiver();
+        // создаем фильтр для BroadcastReceiver
+        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+        // регистрируем (включаем) BroadcastReceiver
+        registerReceiver(broadcastReceiver, intentFilter);
 
     }
 
@@ -160,8 +171,8 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
     public void userLogOut()  {
         //cSharedPreferences.writeData(false, login_status_preferences);
         //stopService(new Intent(this,CNotifications.class));
-        CCustomSharedPreference pref            = ((CCustomApplication)getApplication()).getShared();
-        pref.setLoginData(false);
+        CCustomSharedPreference.setLoginData(false);
+        unregisterReceiver(broadcastReceiver);
         startActivity(new Intent(this, CActivityStart.class));
         finish();
     }
