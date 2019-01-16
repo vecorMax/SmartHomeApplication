@@ -33,19 +33,6 @@ public class CActivityStart extends AppCompatActivity {
     private static final int SIGNIN                         = R.id.sign_in;
     private static final int SIGNUP                         = R.id.sign_up;
 
-    public final static int TASK1_CODE = 1;
-    public final static int TASK2_CODE = 2;
-
-    public final static int STATUS_START = 100;
-    public final static int STATUS_FINISH = 200;
-
-    public final static String PARAM_TIME = "time";
-    public final static String PARAM_TASK = "task";
-    public final static String PARAM_RESULT = "result";
-    public final static String PARAM_STATUS = "status";
-    public final static String BROADCAST_ACTION = "com.smarthome.Activities";
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         requestWindowFeature(Window.FEATURE_NO_TITLE);

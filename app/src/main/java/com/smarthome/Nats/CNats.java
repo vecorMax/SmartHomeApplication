@@ -2,6 +2,7 @@ package com.smarthome.Nats;
 
 import android.app.Application;
 import android.content.Context;
+import android.util.Log;
 
 import com.smarthome.Notifications.CNotifications;
 
@@ -21,7 +22,6 @@ public class CNats extends Thread {
     public static CNats mNats;
     public static Connection natsConnection;
     private static SyncSubscription natsSubs;
-    private static SyncSubscription natsSubs2;
     public static Context mContext;
 
     public CNats(Context context){
@@ -37,8 +37,7 @@ public class CNats extends Thread {
                 natsConnection = Nats.connect(address);
 
                 //подписываемся на получение сообщений
-                natsSubs = natsConnection.subscribeSync("TR1", "queue");
-                natsSubs2 = natsConnection.subscribeSync("TR1C", "queue");
+                natsSubs = natsConnection.subscribeSync("TEMP");
             }
 
             // получение сообщений от сервера NATS на плате RPi3 в бесконечном цикле
@@ -53,18 +52,32 @@ public class CNats extends Thread {
         while (true) {
 
             Message message1 = natsSubs.nextMessage(0);
-            Message message2 = natsSubs2.nextMessage(500);
 
             if (message1 != null)
             {
                 String str = new String(message1.getData(), StandardCharsets.UTF_8);
                 System.out.print(str);
+                CNotifications.createNotification(str,"Temperature in room 1", mContext);
             }
-            else if (message2 != null)
-            {
-                String str = new String(message2.getData(), StandardCharsets.UTF_8);
-                System.out.print(str);
-                CNotifications.createNotification(str,"Temperature in room has changed", mContext);
+        }
+    }
+
+
+    public static void startNATS(Context context) {
+        if (mNats == null || mNats.getState() == Thread.State.TERMINATED) {
+            mNats = new CNats(context);
+            mNats.start();
+        }
+    }
+
+
+    public static void closeNATS(){
+        if (mNats != null || mNats.getState() == Thread.State.RUNNABLE){
+            try {
+                natsConnection = null;
+                mNats.join();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
     }

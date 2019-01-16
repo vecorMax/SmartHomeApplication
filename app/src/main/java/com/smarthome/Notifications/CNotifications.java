@@ -15,7 +15,7 @@ public class CNotifications
     public static void createNotification(String title, String notifyText, Context mContext){
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(mContext)
-                        .setSmallIcon(R.mipmap.ic_temperature_inside)
+                        .setSmallIcon(R.drawable.ic_notify)
                         .setContentTitle(title)
                         .setContentText(notifyText);
 

@@ -12,6 +12,7 @@ import android.widget.Toast;
 
 import com.google.android.material.navigation.NavigationView;
 import com.smarthome.Nats.CNats;
+import com.smarthome.Nats.CServiceMessaging;
 import com.smarthome.Notifications.CNotifications;
 import com.smarthome.R;
 import com.smarthome.Utils.CBroadcastReceiver;
@@ -43,7 +44,8 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
    //private CSharedPreferences cSharedPreferences;
-   CBroadcastReceiver broadcastReceiver;
+    CBroadcastReceiver broadcastReceiver;
+    public static CServiceMessaging cServiceMessaging;
 
 
     @Override
@@ -81,33 +83,16 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
 
     }
 
-    public static void startNATS(Context context) {
-        if (mNats == null || mNats.getState() == Thread.State.TERMINATED) {
-            mNats = new CNats(context);
-            mNats.start();
-        }
-    }
 
-    public static void closeNATS(Context context){
-        if (mNats != null || mNats.getState() == Thread.State.RUNNABLE){
-            try {
-                natsConnection.close();
-                mNats.join();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
 
     private void init(){
         //cSharedPreferences                                  = new CSharedPreferences(getApplicationContext(), login_preference);
         drawerLayout                                        = findViewById(DRAW_LAYOUT);
         navigationView                                      = findViewById(R.id.navigation);
         navigationView.setNavigationItemSelectedListener(this);
+        cServiceMessaging                                   = new CServiceMessaging();
         broadcastReceiver                                   = new CBroadcastReceiver();
-        // создаем фильтр для BroadcastReceiver
         IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        // регистрируем (включаем) BroadcastReceiver
         registerReceiver(broadcastReceiver, intentFilter);
 
     }

@@ -7,10 +7,14 @@ import android.widget.Toast;
 
 import com.smarthome.Activities.CActivityMain;
 import com.smarthome.Nats.CNats;
+import com.smarthome.Nats.CServiceMessaging;
 import com.smarthome.Notifications.CNotifications;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.smarthome.Activities.CActivityMain.cServiceMessaging;
+import static com.smarthome.Nats.CServiceMessaging.close;
+import static com.smarthome.Nats.CServiceMessaging.connect;
 import static com.smarthome.Utils.CCheckNetworkState.TYPE_MOBILE;
 import static com.smarthome.Utils.CCheckNetworkState.TYPE_NOT_CONNECTED;
 import static com.smarthome.Utils.CCheckNetworkState.TYPE_WIFI;
@@ -31,15 +35,20 @@ public class CBroadcastReceiver extends BroadcastReceiver
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                CActivityMain.startNATS(context); //запуск подклчючения к серверу NATS
-                break;
+                //CNats.startNATS(context); //запуск подклчючения к серверу NATS
+                //cServiceMessaging.start();
+                connect(); //запуск подклчючения к серверу NATS
+                //break;
             case TYPE_MOBILE: //наличие мобильной сети Интернет
                 Toast.makeText(context, "WiFi is ON (Mobile)", Toast.LENGTH_SHORT).show();
-                CActivityMain.startNATS(context); //запуск подклчючения к серверу NATS
+                //CNats.startNATS(context); //запуск подклчючения к серверу NATS
+                //cServiceMessaging.start();
+                //connect(); //запуск подклчючения к серверу NATS
                 break;
             case TYPE_NOT_CONNECTED: //отсутствие сети Интернет
                 Toast.makeText(context, "WiFi is OFF", Toast.LENGTH_SHORT).show();
-                CActivityMain.closeNATS(context); //отключение соединения с сервером NATS
+                //CNats.closeNATS(); //отключение соединения с сервером NATS
+                close(); //отключение соединения с сервером NATS
                 break;
         }
     }
