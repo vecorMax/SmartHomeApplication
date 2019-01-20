@@ -1,32 +1,28 @@
 package com.smarthome.Activities;
 
 import android.annotation.SuppressLint;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.content.Intent;
-import android.os.Handler;
-import android.os.Message;
 import android.util.Log;
 import android.view.MenuItem;
 import android.widget.TextView;
-
 import com.google.android.material.navigation.NavigationView;
 import com.smarthome.Nats.CServiceMessaging;
 import com.smarthome.R;
 import com.smarthome.Utils.CBroadcastReceiverConnectivity;
-import com.smarthome.Utils.CBroadcastReceiverUpdating;
 import com.smarthome.Utils.CCustomSharedPreference;
-
 import androidx.appcompat.widget.Toolbar;
-
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import static com.smarthome.Utils.CBroadcastReceiverUpdating.PARAM_DATA;
-
+import static com.smarthome.Nats.CServiceMessaging.PARAM_DATA;
+import static com.smarthome.Nats.CServiceMessaging.cServiceMessaging;
 
 public class CActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -42,14 +38,11 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
 
     public DrawerLayout drawerLayout;
     public NavigationView navigationView;
-    public static CBroadcastReceiverConnectivity cBroadcastReceiverConnectivity;
-    public static CBroadcastReceiverUpdating cBroadcastReceiverUpdating;
-    public static CServiceMessaging cServiceMessaging;
+    public CBroadcastReceiverConnectivity cBroadcastReceiverConnectivity;
+    private BroadcastReceiver brUpdatingItems;
 
     TextView textTemperature;
     TextView dataTemperature;
-
-    public static Handler h;
 
 
     @SuppressLint("HandlerLeak")
@@ -62,13 +55,6 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
 
         init();
         initToolbar();
-
-        h = new Handler() {
-            public void handleMessage(Message msg) {
-                // обновляем TextView
-                dataTemperature.setText(msg.getData().getString(PARAM_DATA));
-            }
-        };
 
     }
 
@@ -91,10 +77,18 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
         }
 
         //BroadcastReceiverUpdating для обновления данных на странице приложения
-        if (cBroadcastReceiverUpdating == null) {
-            cBroadcastReceiverUpdating = new CBroadcastReceiverUpdating();
-            IntentFilter intentFilterUpdating = new IntentFilter(BROADCAST_ACTION);
-            registerReceiver(cBroadcastReceiverUpdating, intentFilterUpdating);
+        if (brUpdatingItems == null) {
+            brUpdatingItems = new BroadcastReceiver(){
+                @Override
+                public void onReceive(Context context, Intent intent) {
+                    try {
+                        dataTemperature.setText(intent.getStringExtra(PARAM_DATA));
+                    }
+                    catch (Exception ex){
+                        System.out.print(ex.toString());
+                    }
+                }
+            };
         }
 
     }
@@ -161,7 +155,7 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
     public void userLogOut()  {
         CCustomSharedPreference.setLoginData(false);
         unregisterReceiver(cBroadcastReceiverConnectivity);
-        unregisterReceiver(cBroadcastReceiverUpdating);
+        unregisterReceiver(brUpdatingItems);
         startActivity(new Intent(this, CActivityStart.class));
         finish();
     }
@@ -212,6 +206,10 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
     @Override
     protected void onStart() {
         super.onStart();
+        IntentFilter intentFilterUpdating = new IntentFilter();
+        intentFilterUpdating.addAction(BROADCAST_ACTION);
+
+        LocalBroadcastManager.getInstance(this).registerReceiver(brUpdatingItems,intentFilterUpdating);
         Log.d(LOG_TAG,"CActivityMain: onStart()");
     }
 
@@ -223,6 +221,7 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
 
     @Override
     protected void onStop() {
+        LocalBroadcastManager.getInstance(this).unregisterReceiver(brUpdatingItems);
         super.onStop();
         Log.d(LOG_TAG,"CActivityMain: onStop()");
     }

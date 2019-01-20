@@ -1,32 +1,15 @@
 package com.smarthome.Utils;
 
-import android.accounts.NetworkErrorException;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
-import android.os.NetworkOnMainThreadException;
-import android.util.Log;
-import android.widget.Toast;
-
-import com.smarthome.Activities.CActivityMain;
-import com.smarthome.Nats.CNats;
 import com.smarthome.Nats.CServiceMessaging;
-import com.smarthome.Notifications.CNotifications;
-
-import java.io.IOException;
-import java.security.Signature;
-import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
-
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-
-import static com.smarthome.Activities.CActivityMain.cServiceMessaging;
+import static com.smarthome.Nats.CServiceMessaging.cServiceMessaging;
 import static com.smarthome.Utils.CCheckNetworkState.TYPE_MOBILE;
 import static com.smarthome.Utils.CCheckNetworkState.TYPE_NOT_CONNECTED;
 import static com.smarthome.Utils.CCheckNetworkState.TYPE_WIFI;
