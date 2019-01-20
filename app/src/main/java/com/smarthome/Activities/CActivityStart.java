@@ -3,25 +3,17 @@ package com.smarthome.Activities;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.AlarmManager;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.pm.ActivityInfo;
-import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.Toast;
 
 import com.smarthome.R;
-import com.smarthome.Utils.CBroadcastReceiver;
 import com.smarthome.Utils.CCustomApplication;
 import com.smarthome.Utils.CCustomSharedPreference;
-import com.smarthome.Utils.CServiceTools;
 
 import static com.smarthome.Activities.CActivityLogin.mPref;
 

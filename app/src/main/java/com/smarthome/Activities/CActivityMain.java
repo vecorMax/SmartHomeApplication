@@ -1,22 +1,21 @@
 package com.smarthome.Activities;
 
-import android.content.Context;
+import android.annotation.SuppressLint;
 import android.content.IntentFilter;
 import android.net.ConnectivityManager;
-import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.content.Intent;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.Toast;
+import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
-import com.smarthome.Nats.CNats;
 import com.smarthome.Nats.CServiceMessaging;
-import com.smarthome.Notifications.CNotifications;
 import com.smarthome.R;
-import com.smarthome.Utils.CBroadcastReceiver;
-import com.smarthome.Utils.CCustomApplication;
+import com.smarthome.Utils.CBroadcastReceiverConnectivity;
+import com.smarthome.Utils.CBroadcastReceiverUpdating;
 import com.smarthome.Utils.CCustomSharedPreference;
 
 import androidx.appcompat.widget.Toolbar;
@@ -24,15 +23,15 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
-import static android.net.wifi.WifiManager.WIFI_STATE_CHANGED_ACTION;
-import static com.smarthome.Nats.CNats.mNats;
-import static com.smarthome.Nats.CNats.natsConnection;
+import static com.smarthome.Utils.CBroadcastReceiverUpdating.PARAM_DATA;
 
 
 public class CActivityMain extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String LOG_TAG                 = "status";
+    public final static String BROADCAST_ACTION         = "com.smarthome.Activities";
     private static final int LAYOUT                     = R.layout.activity_main;
     private static final int THEME                      = R.style.AppDefault;
     private static final int TOOLBAR                    = R.id.toolbar;
@@ -41,13 +40,19 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
     private static final int HOMEPAGE                   = R.id.HomePage;
     private static final int NOTIFY                     = R.id.Notify;
 
-    private DrawerLayout drawerLayout;
-    private NavigationView navigationView;
-   //private CSharedPreferences cSharedPreferences;
-    CBroadcastReceiver broadcastReceiver;
+    public DrawerLayout drawerLayout;
+    public NavigationView navigationView;
+    public static CBroadcastReceiverConnectivity cBroadcastReceiverConnectivity;
+    public static CBroadcastReceiverUpdating cBroadcastReceiverUpdating;
     public static CServiceMessaging cServiceMessaging;
 
+    TextView textTemperature;
+    TextView dataTemperature;
 
+    public static Handler h;
+
+
+    @SuppressLint("HandlerLeak")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(THEME);
@@ -57,48 +62,45 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
 
         init();
         initToolbar();
-        //startNATS();
 
-        // экземпляр класса SharedPreferences, который отвечает за работу с настройками
-        //mSettings = getSharedPreferences(APP_PREFERENCES_SWITCH_TEMPERATURE, Context.MODE_PRIVATE);
-
-        //Инициализация элементов activity_main
-//        switch_temp = findViewById(R.id.switch_Temperature);
-
-        // добавляем слушателя переключателя
-//        switch_temp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-//
-//            @Override
-//            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-//                if (isChecked) {
-//                    //Рассылка уведомлений о получений данных о погоде установлена
-//                    CNotifications.getDataTemperatureInside = true;
-//                    CNotifications.mContext = getApplicationContext();
-//                } else {
-//                    //Рассылка уведомлений о получении данных о погоде установлена
-//                    CNotifications.getDataTemperatureInside = false;
-//                }
-//            }
-//        });
+        h = new Handler() {
+            public void handleMessage(Message msg) {
+                // обновляем TextView
+                dataTemperature.setText(msg.getData().getString(PARAM_DATA));
+            }
+        };
 
     }
 
-
-
     private void init(){
-        //cSharedPreferences                                  = new CSharedPreferences(getApplicationContext(), login_preference);
         drawerLayout                                        = findViewById(DRAW_LAYOUT);
         navigationView                                      = findViewById(R.id.navigation);
+        textTemperature                                     = findViewById(R.id.txt_notify_temperature);
+        dataTemperature                                     = findViewById(R.id.dataTemperature);
+
         navigationView.setNavigationItemSelectedListener(this);
-        cServiceMessaging                                   = new CServiceMessaging();
-        broadcastReceiver                                   = new CBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
-        registerReceiver(broadcastReceiver, intentFilter);
+        if (cServiceMessaging == null) {
+            cServiceMessaging = new CServiceMessaging();
+        }
+
+        //BroadcastReceiverConnectivity для отслеживания состояния сети Интернет на телефоне
+        if (cBroadcastReceiverConnectivity == null){
+            cBroadcastReceiverConnectivity = new CBroadcastReceiverConnectivity();
+            IntentFilter intentFilterConnectivity = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+            registerReceiver(cBroadcastReceiverConnectivity, intentFilterConnectivity);
+        }
+
+        //BroadcastReceiverUpdating для обновления данных на странице приложения
+        if (cBroadcastReceiverUpdating == null) {
+            cBroadcastReceiverUpdating = new CBroadcastReceiverUpdating();
+            IntentFilter intentFilterUpdating = new IntentFilter(BROADCAST_ACTION);
+            registerReceiver(cBroadcastReceiverUpdating, intentFilterUpdating);
+        }
 
     }
 
     private void initToolbar() {
-        Toolbar toolbar                     = findViewById(TOOLBAR);
+        Toolbar toolbar                                     = findViewById(TOOLBAR);
         setSupportActionBar(toolbar);
         if (getSupportActionBar()!= null)
         {
@@ -106,6 +108,7 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
             getSupportActionBar().setTitle("Home");
         }
     }
+
 
     /****************************************************************************************************
      * Обработчик нажатия на элемент меню                                                               *
@@ -117,17 +120,19 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == HOMEPAGE){
-            // Возврат на главную страницу приложения
-            userHomePage();
-        }
-        else if (id == NOTIFY){
-            // Переход на страницу с уведомлениями
-            userNotify();
-        }
-        else if (id ==  LOGOUT) {
-            // Управление выходом из учетной записи пользователя
-            userLogOut();
+        switch (id)
+        {
+            case HOMEPAGE: // Возврат на главную страницу приложения
+                userHomePage();
+                break;
+            case NOTIFY:  // Переход на страницу с уведомлениями
+                userNotify();
+                break;
+            case LOGOUT: // Управление выходом из учетной записи пользователя
+                userLogOut();
+                break;
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
@@ -154,10 +159,9 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
      * @return                                                                                          *
      ***************************************************************************************************/
     public void userLogOut()  {
-        //cSharedPreferences.writeData(false, login_status_preferences);
-        //stopService(new Intent(this,CNotifications.class));
         CCustomSharedPreference.setLoginData(false);
-        unregisterReceiver(broadcastReceiver);
+        unregisterReceiver(cBroadcastReceiverConnectivity);
+        unregisterReceiver(cBroadcastReceiverUpdating);
         startActivity(new Intent(this, CActivityStart.class));
         finish();
     }
@@ -172,7 +176,7 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
     }
 
     /****************************************************************************************************
-     * Вернутся на начальную страницу                                                                   *
+     * Вернутся на страницу управления уведомлениями                                                    *
      * @param                                                                                           *
      * @return                                                                                          *
      ***************************************************************************************************/
@@ -195,13 +199,13 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
 
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
-        //switch_temp.setChecked(savedInstanceState.getBoolean("switch"));
+        dataTemperature.setText(savedInstanceState.getString("dataTemperature"));
         Log.d(LOG_TAG, "CActivityMain: onRestoreInstanceState()");
     }
 
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        //outState.putBoolean("switch",switch_temp.isChecked());
+        outState.putString("dataTemperature",dataTemperature.getText().toString());
         Log.d(LOG_TAG, "CActivityMain: onSaveInstanceState()");
     }
 
@@ -227,42 +231,7 @@ public class CActivityMain extends AppCompatActivity implements NavigationView.O
     protected void onDestroy() {
         super.onDestroy();
         Log.d(LOG_TAG,"CActivityMain: onDestroy()");
+        //finish();
     }
-
-//    /****************************************************************************************************
-//     * Действия при создании меню.                                                                      *
-//     * @param menu - заготовка для меню.                                                                *
-//     * @return                                                                                          *
-//     ***************************************************************************************************/
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu)
-//    {
-//        MenuInflater inflater               = getMenuInflater();
-//        inflater.inflate(MENU_MAIN, menu);
-//        return true;
-//    }
-
-//    /****************************************************************************************************
-//     * Обработка нажатий на элемент меню.                                                               *
-//     * @param item - элемент меню, на который нажал пользователь.                                       *
-//     * @return                                                                                          *
-//     ***************************************************************************************************/
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item)
-//    {
-//        // Handle item selection
-//        switch (item.getItemId())
-//        {
-//            case LOGOUT:
-//                userLogOut();
-//                return true;
-//            case R.id.Settings:
-//                return true;
-//            case R.id.Notify:
-//                return true;
-//            default:
-//                return super.onOptionsItemSelected(item);
-//        }
-//    }
 
 }

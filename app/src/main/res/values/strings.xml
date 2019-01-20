@@ -44,6 +44,7 @@
     <string name="password_hint">Password</string>
     <string name="email_hint">Email</string>
     <string name="username_hint">Username</string>
+    <string name="temperature">Temperature</string>
 
 
 </resources>

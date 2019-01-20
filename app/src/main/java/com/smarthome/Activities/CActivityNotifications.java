@@ -34,7 +34,7 @@ public class CActivityNotifications extends AppCompatActivity implements Navigat
     public DrawerLayout drawerLayout;
     public NavigationView navigationView;
     public TextView txtTemp;
-    public Switch swtTemp;
+    public static Switch swtTemp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -22,6 +22,30 @@
                 android:layout_height="?attr/actionBarSize"
                 android:background="?attr/colorPrimary" />
 
+            <TableLayout
+                android:id="@+id/TableLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/mainBackground" >
+
+                <TableRow>
+                    <TextView
+                        android:id="@+id/txt_notify_temperature"
+                        android:layout_weight="50"
+                        android:gravity="center"
+                        android:layout_height="?attr/actionBarSize"
+                        android:text="@string/temperature"/>
+
+                    <TextView
+                        android:id="@+id/dataTemperature"
+                        android:layout_height="?attr/actionBarSize"
+                        android:layout_weight="50"
+                        android:gravity="center"
+                        android:text="0.0" />
+                </TableRow>
+
+            </TableLayout>
+
         </com.google.android.material.appbar.AppBarLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
