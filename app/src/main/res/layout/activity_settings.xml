@@ -1,10 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.drawerlayout.widget.DrawerLayout
+
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawerLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    tools:context=".Activities.CActivityNotifications"
     android:background="@color/mainBackground"
     android:fitsSystemWindows="true">
 
@@ -14,7 +17,7 @@
 
         <com.google.android.material.appbar.AppBarLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
@@ -30,18 +33,31 @@
 
                 <TableRow>
                     <TextView
-                        android:id="@+id/txt_notify_temperature"
+                        android:id="@+id/enter_temperature_delay"
                         android:layout_weight="1"
                         android:gravity="center"
                         android:layout_height="?attr/actionBarSize"
-                        android:text="@string/temperature"/>
+                        android:text="@string/NewDelayTempeture"/>
 
-                    <TextView
-                        android:id="@+id/dataTemperature"
+                    <EditText
+                        android:id="@+id/enter_temperature_delay_digit"
                         android:layout_weight="1"
                         android:gravity="center"
                         android:layout_height="?attr/actionBarSize"
-                        android:text="" />
+                        />
+                </TableRow>
+
+                <TableRow>
+
+                    <Button
+                        android:id="@+id/save_user_settings"
+                        android:gravity="center"
+                        android:layout_weight="2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="?attr/actionBarSize"
+                        android:text="@string/SaveUserSettings"
+                        />
+
                 </TableRow>
 
             </TableLayout>
@@ -49,21 +65,6 @@
         </com.google.android.material.appbar.AppBarLayout>
 
     </androidx.coordinatorlayout.widget.CoordinatorLayout>
-
-    <!--<TableRow>-->
-    <!--<TextView-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_weight="20"-->
-    <!--android:gravity="center_horizontal"-->
-    <!--android:text="@string/TextTemperature" />-->
-
-    <!--<Switch-->
-    <!--android:id="@+id/switch_Temperature"-->
-    <!--android:layout_width="wrap_content"-->
-    <!--android:layout_height="wrap_content"-->
-    <!--android:layout_weight="1" />-->
-    <!--</TableRow>-->
 
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation"

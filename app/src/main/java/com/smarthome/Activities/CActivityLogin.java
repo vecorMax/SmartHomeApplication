@@ -210,7 +210,7 @@ public class CActivityLogin extends AppCompatActivity {
                 }
                 else{
                     // login with only fingerprint
-                    Intent userIntent                       = new Intent(context, CActivityMain.class);
+                    Intent userIntent                       = new Intent(context, CActivityHome.class);
                     mPref.setLoginData(true);
                     userIntent.putExtra("USER_BIO", userString);
                     context.startActivity(userIntent);
@@ -254,7 +254,7 @@ public class CActivityLogin extends AppCompatActivity {
                     return;
                 }
                 if(mUser.getPassword().equals(authPassword)){
-                    Intent userIntent                               = new Intent(view.getContext(), CActivityMain.class);
+                    Intent userIntent                               = new Intent(view.getContext(), CActivityHome.class);
                     mPref.setLoginData(true);
                     userIntent.putExtra("USER_BIO", userString);
                     view.getContext().startActivity(userIntent);

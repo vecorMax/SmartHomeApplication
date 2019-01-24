@@ -3,13 +3,13 @@ package com.smarthome.Utils;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
-import com.smarthome.Nats.CServiceMessaging;
+import com.smarthome.Nats.CServiceMessagingNats;
 import java.util.concurrent.TimeUnit;
 import io.reactivex.Single;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.observers.DisposableSingleObserver;
 import io.reactivex.schedulers.Schedulers;
-import static com.smarthome.Nats.CServiceMessaging.cServiceMessaging;
+import static com.smarthome.Nats.CServiceMessagingNats.cServiceMessagingNats;
 import static com.smarthome.Utils.CCheckNetworkState.TYPE_MOBILE;
 import static com.smarthome.Utils.CCheckNetworkState.TYPE_NOT_CONNECTED;
 import static com.smarthome.Utils.CCheckNetworkState.TYPE_WIFI;
@@ -29,8 +29,8 @@ public class CBroadcastReceiverConnectivity extends BroadcastReceiver
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
-                CServiceMessaging.mContext = context;
-                Single.fromCallable(() -> cServiceMessaging.connect())
+                CServiceMessagingNats.mContext = context;
+                Single.fromCallable(() -> cServiceMessagingNats.connect())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new DisposableSingleObserver<String>() {
@@ -47,7 +47,7 @@ public class CBroadcastReceiverConnectivity extends BroadcastReceiver
                         );
                 break;
             case TYPE_MOBILE: //наличие мобильной сети Интернет
-                Single.fromCallable(() -> cServiceMessaging.connect())
+                Single.fromCallable(() -> cServiceMessagingNats.connect())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new DisposableSingleObserver<String>() {
@@ -64,7 +64,7 @@ public class CBroadcastReceiverConnectivity extends BroadcastReceiver
                         );
                 break;
             case TYPE_NOT_CONNECTED: //отсутствие сети Интернет
-                Single.fromCallable(() -> cServiceMessaging.close())
+                Single.fromCallable(() -> cServiceMessagingNats.close())
                         .subscribeOn(Schedulers.io())
                         .observeOn(AndroidSchedulers.mainThread())
                         .subscribe(new DisposableSingleObserver<String>() {

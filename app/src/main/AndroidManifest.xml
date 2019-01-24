@@ -1,16 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.smarthome">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE"/>
-    <uses-permission android:name="android.permission.USE_BIOMETRIC"/>
-    <uses-permission android:name="android.permission.USE_FINGERPRINT"/>
-
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.USE_BIOMETRIC" />
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
 
     <application
         android:name=".Utils.CCustomApplication"
@@ -20,7 +18,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity android:name=".Activities.CActivitySettings"></activity>
         <activity android:name=".Activities.CActivityStart">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -28,19 +26,16 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.CActivityMain" />
+        <activity android:name=".Activities.CActivityHome" />
         <activity android:name=".Activities.CActivityLogin" />
         <activity android:name=".Activities.CActivityNotifications" />
-        <activity android:name=".Activities.CActivitySignUp"></activity>
-
+        <activity android:name=".Activities.CActivitySignUp" />
 
         <service
             android:name=".Utils.CServiceTools"
             android:enabled="true"
             android:exported="true"
-            android:process=":myservice"/>
-
-
+            android:process=":myservice" />
     </application>
 
 </manifest>

@@ -3,19 +3,24 @@ package com.smarthome.Nats;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import com.google.gson.JsonObject;
+
 import org.json.JSONException;
 import org.json.JSONObject;
 import java.io.IOException;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import io.nats.client.Connection;
 import io.nats.client.Message;
 import io.nats.client.MessageHandler;
 import io.nats.client.Nats;
-import static com.smarthome.Activities.CActivityMain.BROADCAST_ACTION;
+import static com.smarthome.Activities.CActivityHome.BROADCAST_ACTION;
 
 
-public class CServiceMessaging
+public class CServiceMessagingNats
 {
     //Строковые константы
     private static final String LOG_TAG                                     = "ServiceMessaging";
@@ -30,6 +35,8 @@ public class CServiceMessaging
     private static final String FAILCLSD                                    = "Failed to closing connection. Check connection again";
     private static final String FAILPARS                                    = "Cannot parse NATS message as json object.";
     private static final String WORKNATS                                    = "State NATS: connected";
+    private static final String NO_NATS                                     = "There is no connection to NATS server";
+    private static final String PUBSUCC                                     = "Message was published on server successfully";
 
     public static final String PARAM_UPD                                    = "upd"; //обновление данных
     public static final String PARAM_UUID                                   = "uuid"; //ID устройства Raspberry Pi3
@@ -43,8 +50,13 @@ public class CServiceMessaging
     private static Connection nats;
     public static Context mContext;
 
-    public static CServiceMessaging cServiceMessaging;
+    public static CServiceMessagingNats cServiceMessagingNats;
 
+    /**
+     * Соединение с сервером NATS.
+     * Оформление подписки на прием вхордящих сообщений от сервера NATS
+     * @return
+     */
     public String connect()  {
         String result_connect                           = null;
         if (nats == null || !nats.isConnected())
@@ -70,20 +82,30 @@ public class CServiceMessaging
 
     }
 
-    public void send(Message msg) {
+    /**
+     * Отправка сообщений на сервер NATS.
+     * @param str
+     */
+    public String send(String str) {
         connect();
         if (!nats.isConnected())
-            return;
+            return NO_NATS;
 
         try {
-            nats.publish("TEMP", msg.getData());
+            nats.publish("TEMP_FROM_DEVICE_TO_SERVER", str.getBytes(StandardCharsets.UTF_8));
             Log.d(LOG_TAG, MSGPBLSH);
+            return PUBSUCC;
         } catch (IOException e) {
             Log.d(LOG_TAG, FAILPBLS);
             e.printStackTrace();
+            return FAILPBLS;
         }
     }
 
+    /**
+     * Завершение соединения с сервером NATS.
+     * @return
+     */
     public String close(){
         if(nats.isConnected())
             return FAILCLSD;
@@ -95,6 +117,10 @@ public class CServiceMessaging
         return CLSDNATS;
     }
 
+    /**
+     * Подписка на сообщения от сервера NATS по subject.
+     * Обработка входящих сообщений от сервера NATS.
+     */
     public void subscribe(){
         if(!nats.isConnected())
             return;
@@ -103,22 +129,22 @@ public class CServiceMessaging
             Charset charset                             = Charset.forName("UTF-8");
             String str                                  = new String(msg.getData(), charset);
             JSONObject json;
-            String id;            //идентификатор платы
+            String id;          //идентификатор платы
             String objMeasure;  //объект измерения (Температура, Влажность..)
             String currTime;    //время исселедования датчика
             String mode;        //для светодиода вкл/выыкл; Нагрев/Охлаждение
             String delay;       //время задержки для повторного опроса датчика
-            String data;        //данные с датчика
+            Double data;        //данные с датчика
 
             try
             {
                 json                                    = new JSONObject(str);
                 id                                      = json.getString("UUID");
-                objMeasure                              = json.getString("Object Measure");
-                currTime                                = json.getString("Current Time");
+                objMeasure                              = json.getString("ObjectMeasure");
+                currTime                                = json.getString("CurrentTime");
                 mode                                    = json.getString("Mode");
-                delay                                   = json.getString("Sleep");
-                data                                    = json.getString("Data");
+                delay                                   = json.getString("Delay");
+                data                                    = Double.valueOf(json.getString("Data"));
 
                 //отправляем вышеуказанные параметры на обработку и на обновление данных на экране Activity через Intent и BroadcastReceiver
                 Intent intent = new Intent(BROADCAST_ACTION);
@@ -138,7 +164,7 @@ public class CServiceMessaging
 
         };
 
-        nats.subscribe("TEMP", handler); //получение данных о текущей температуре с сервера NATS "главной" платы
+        nats.subscribe("TEMP_IN_DEVICE_FROM_SERVER", handler); //получение данных о текущей температуре с сервера NATS "главной" платы
 
     }
 

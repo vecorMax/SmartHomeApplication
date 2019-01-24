@@ -60,7 +60,7 @@ public class CActivityStart extends AppCompatActivity {
 
 
         if (CCustomSharedPreference.getLoginData()){
-            Intent userIntent                               = new Intent(CActivityStart.this, CActivityMain.class);
+            Intent userIntent                               = new Intent(CActivityStart.this, CActivityHome.class);
             startActivity(userIntent);
             finish();
         }

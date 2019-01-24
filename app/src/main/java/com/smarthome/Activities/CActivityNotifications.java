@@ -10,9 +10,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
-import android.widget.CheckBox;
 import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -21,15 +19,18 @@ import com.smarthome.R;
 
 public class CActivityNotifications extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final String LOG_TAG                 = "status";
-    private static final int LAYOUT                     = R.layout.activity_notifications;
-    private static final int THEME                      = R.style.AppDefault;
-    private static final int DRAW_LAYOUT                = R.id.drawerLayout;
-    private static final int TOOLBAR                    = R.id.toolbar;
-    private static final int HOMEPAGE                   = R.id.HomePage;
-    private static final int SWTTEMP                    = R.id.switchTemperature;
-    private static final int TXTTEMP                    = R.id.txt_notify_temperature;
-    private static final int NAVI_VIEW                  = R.id.navigation;
+    private static final String LOG_TAG                                 = "status";
+    private static final int LAYOUT                                     = R.layout.activity_notifications;
+    private static final int THEME                                      = R.style.AppDefault;
+    private static final int DRAW_LAYOUT                                = R.id.drawerLayout;
+    private static final int TOOLBAR                                    = R.id.toolbar;
+    private static final int HOMEPAGE                                   = R.id.HomePage;
+    private static final int SWTTEMP                                    = R.id.switchTemperature;
+    private static final int TXTTEMP                                    = R.id.txt_notify_temperature;
+    private static final int NAVI_VIEW                                  = R.id.navigation;
+    private static final int SETTINGS                                   = R.id.Settings;
+    private static final int NOTIFY                                     = R.id.Notify;
+    private static final int LOGOUT                                     = R.id.Logout;
 
     public DrawerLayout drawerLayout;
     public NavigationView navigationView;
@@ -48,10 +49,10 @@ public class CActivityNotifications extends AppCompatActivity implements Navigat
     }
 
     private void init() {
-        drawerLayout                                        = findViewById(DRAW_LAYOUT);
-        navigationView                                      = findViewById(NAVI_VIEW);
-        txtTemp                                             = findViewById(TXTTEMP);
-        swtTemp                                             = findViewById(SWTTEMP);
+        drawerLayout                                                    = findViewById(DRAW_LAYOUT);
+        navigationView                                                  = findViewById(NAVI_VIEW);
+        txtTemp                                                         = findViewById(TXTTEMP);
+        swtTemp                                                         = findViewById(SWTTEMP);
 
         navigationView.setNavigationItemSelectedListener(this);
         swtTemp.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -81,9 +82,21 @@ public class CActivityNotifications extends AppCompatActivity implements Navigat
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == HOMEPAGE){
-            // Возврат на главную страницу приложения
-            userHomePage();
+        switch (id)
+        {
+            case HOMEPAGE:          // Управление переход на главную страницу приложения
+                userHomePage();
+                break;
+            case NOTIFY:            // Управление переход на страницу с настройками уведомлений
+                userNotify();
+                break;
+            case LOGOUT:            // Управление выходом из учетной записи пользователя
+                userLogOut();
+                break;
+            case SETTINGS:          // Управление переходом на страницу с пользовательскими настройками
+                userSettings();
+            default:
+                return super.onOptionsItemSelected(item);
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);
@@ -92,8 +105,31 @@ public class CActivityNotifications extends AppCompatActivity implements Navigat
 
 
     public void userHomePage() {
-        startActivity(new Intent(this, CActivityMain.class));
+        startActivity(new Intent(this, CActivityHome.class));
         finish();
+    }
+
+    public void userNotify() {
+        onBackPressed();
+    }
+
+    public void userLogOut() {
+        startActivity(new Intent(this, CActivityStart.class));
+        finish();
+    }
+
+    public void userSettings() {
+        startActivity(new Intent(this, CActivitySettings.class));
+        finish();
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
+            drawerLayout.closeDrawer(GravityCompat.START);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     @Override
