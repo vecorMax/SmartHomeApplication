@@ -45,7 +45,7 @@
     <string name="email_hint">Email</string>
     <string name="username_hint">Username</string>
     <string name="temperature">Temperature</string>
-    <string name="NewDelayTempeture">Enter response time of the temp. sensor</string>
+    <string name="NewDelayTempeture">Time Delay</string>
     <string name="SaveUserSettings">Save</string>
 
 

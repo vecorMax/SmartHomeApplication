@@ -4,30 +4,26 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import io.reactivex.Single;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.observers.DisposableSingleObserver;
-import io.reactivex.schedulers.Schedulers;
 
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.smarthome.Nats.CServiceMessagingNats;
 import com.smarthome.R;
 import com.smarthome.Utils.CCustomSharedPreference;
+import com.smarthome.Utils.CSettingsSharedPreferences;
 
-import java.util.Calendar;
-
-import static com.smarthome.Nats.CServiceMessagingNats.cServiceMessagingNats;
+import static com.smarthome.Nats.CServiceMessagingNats.sendMessageToServer;
 
 public class CActivitySettings extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -50,7 +46,11 @@ public class CActivitySettings extends AppCompatActivity implements NavigationVi
 
     private TextView mTextViewTemperatureDelay;
     private EditText mEditTextTemperatureDelay;
+    private ImageView mImageViewEditable;
+    private ImageView mImageViewAcceptChanges;
     private Button mButtonSaveUserSettings;
+
+    protected static CSettingsSharedPreferences mPrefSettings;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,45 +69,21 @@ public class CActivitySettings extends AppCompatActivity implements NavigationVi
         navigationView                                                  = findViewById(NAVI_VIEW);
         mTextViewTemperatureDelay                                       = findViewById(TEMP_DELAY);
         mEditTextTemperatureDelay                                       = findViewById(TMP_DL_DGT);
+        mEditTextTemperatureDelay.setTag(mEditTextTemperatureDelay.getKeyListener());
+        mEditTextTemperatureDelay.setKeyListener(null); // по умолчанию установлен запрет на изменение данных
+        mEditTextTemperatureDelay.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+        mImageViewEditable                                              = findViewById(R.id.imageViewEditable);
+        mImageViewEditable.setOnClickListener(v -> {
+            //по кнопке открываем поле mEditTextTemperatureDelay для редактирования
+            mEditTextTemperatureDelay.setKeyListener((KeyListener) mEditTextTemperatureDelay.getTag());
+            mEditTextTemperatureDelay.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
+        });
+        mImageViewAcceptChanges                                         = findViewById(R.id.imageViewResultChanges);
         mButtonSaveUserSettings                                         = findViewById(SAVE_SETTG);
         navigationView.setNavigationItemSelectedListener(this);
-        mButtonSaveUserSettings.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                //по кнопке отправляем сообщение на сервер
-
-                StructData structData                                   = new StructData();
-                structData.UUID                                         = "*b827eb05c42d";
-                structData.ObjectMeasure                                = "Temperature";
-                Calendar calendar                                       = Calendar.getInstance();
-                calendar.setTimeInMillis(System.currentTimeMillis());
-                structData.CurrentTime                                  = calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" +
-                                                                          calendar.get(Calendar.DAY_OF_MONTH) + " " + calendar.get(Calendar.HOUR_OF_DAY) + ":" +
-                                                                          calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND) + "." +
-                                                                          calendar.get(Calendar.MILLISECOND);
-                structData.Delay                                        = Double.valueOf(mEditTextTemperatureDelay.getText().toString());
-
-
-                GsonBuilder builder = new GsonBuilder();
-                Gson gson = builder.create();
-                String json = gson.toJson(structData);
-
-                Single.fromCallable(() -> cServiceMessagingNats.send(json))
-                        .subscribeOn(Schedulers.io())
-                        .observeOn(AndroidSchedulers.mainThread())
-                        .subscribe(new DisposableSingleObserver<String>() {
-                                       @Override
-                                       public void onSuccess(String s) {
-                                           //Toast.makeText(context,s,Toast.LENGTH_LONG).show();
-                                       }
-
-                                       @Override
-                                       public void onError(Throwable e) {
-                                           //Toast.makeText(context,e.toString(),Toast.LENGTH_LONG).show();
-                                       }
-                                   }
-                        );
-            }
+        mButtonSaveUserSettings.setOnClickListener(v -> {
+            //по кнопке отправляем сообщение на сервер об изменении частоты опроса датчика температуры
+            sendMessageToServer(mEditTextTemperatureDelay);
         });
     }
 
@@ -176,10 +152,5 @@ public class CActivitySettings extends AppCompatActivity implements NavigationVi
         onBackPressed();
     }
 
-    class StructData {
-        String UUID;
-        String ObjectMeasure;
-        String CurrentTime;
-        Double Delay;
-    }
+
 }

@@ -3,7 +3,10 @@ package com.smarthome.Nats;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.widget.EditText;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 
 import org.json.JSONException;
@@ -11,12 +14,18 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.Calendar;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import io.nats.client.Connection;
 import io.nats.client.Message;
 import io.nats.client.MessageHandler;
 import io.nats.client.Nats;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
+
 import static com.smarthome.Activities.CActivityHome.BROADCAST_ACTION;
 
 
@@ -46,6 +55,8 @@ public class CServiceMessagingNats
     public static final String PARAM_DELAY                                  = "delay"; //Частота измерения
     public static final String PARAM_DATA                                   = "data"; //Данные с датчика
 
+    private static final String MAIN_SERVER                                 = "*b827eb05c42d";
+
     private static final String address                                     = "nats://192.168.1.103:4222";
     private static Connection nats;
     public static Context mContext;
@@ -58,21 +69,21 @@ public class CServiceMessagingNats
      * @return
      */
     public String connect()  {
-        String result_connect                           = null;
+        String result_connect                                               = null;
         if (nats == null || !nats.isConnected())
         {
             Log.d(LOG_TAG, ESTALISH);
             try {
-                nats                                    = Nats.connect(address);
+                nats                                                        = Nats.connect(address);
                 Log.d(LOG_TAG, CONNNATS);
                 subscribe();
                 Log.d(LOG_TAG, SUBSCORG);
-                result_connect                          = CONNNATS;
+                result_connect                                              = CONNNATS;
             }
             catch (IOException e) {
                 Log.d(LOG_TAG, FAILNATS);
                 e.printStackTrace();
-                result_connect                          = FAILNATS;
+                result_connect                                              = FAILNATS;
             }
         }
         else if (nats != null)
@@ -126,8 +137,8 @@ public class CServiceMessagingNats
             return;
 
         MessageHandler handler = (Message msg) -> {
-            Charset charset                             = Charset.forName("UTF-8");
-            String str                                  = new String(msg.getData(), charset);
+            Charset charset                                                 = Charset.forName("UTF-8");
+            String str                                                      = new String(msg.getData(), charset);
             JSONObject json;
             String id;          //идентификатор платы
             String objMeasure;  //объект измерения (Температура, Влажность..)
@@ -138,16 +149,16 @@ public class CServiceMessagingNats
 
             try
             {
-                json                                    = new JSONObject(str);
-                id                                      = json.getString("UUID");
-                objMeasure                              = json.getString("ObjectMeasure");
-                currTime                                = json.getString("CurrentTime");
-                mode                                    = json.getString("Mode");
-                delay                                   = json.getString("Delay");
-                data                                    = Double.valueOf(json.getString("Data"));
+                json                                                        = new JSONObject(str);
+                id                                                          = json.getString("UUID");
+                objMeasure                                                  = json.getString("ObjectMeasure");
+                currTime                                                    = json.getString("CurrentTime");
+                mode                                                        = json.getString("Mode");
+                delay                                                       = json.getString("Delay");
+                data                                                        = Double.valueOf(json.getString("Data"));
 
                 //отправляем вышеуказанные параметры на обработку и на обновление данных на экране Activity через Intent и BroadcastReceiver
-                Intent intent = new Intent(BROADCAST_ACTION);
+                Intent intent                                               = new Intent(BROADCAST_ACTION);
                 intent.putExtra(PARAM_UPD, 1);
                 intent.putExtra(PARAM_UUID, id);
                 intent.putExtra(PARAM_OBJECT, objMeasure);
@@ -165,7 +176,45 @@ public class CServiceMessagingNats
         };
 
         nats.subscribe("TEMP_IN_DEVICE_FROM_SERVER", handler); //получение данных о текущей температуре с сервера NATS "главной" платы
+    }
 
+    static class StructData {
+        String UUID;
+        String ObjectMeasure;
+        String CurrentTime;
+        Double Delay;
+    }
+
+    public static void sendMessageToServer(EditText editText) {
+        StructData structData                                               = new StructData();
+        structData.UUID                                                     = MAIN_SERVER;
+        structData.ObjectMeasure                                            = "Temperature";
+        Calendar calendar                                                   = Calendar.getInstance();
+        calendar.setTimeInMillis(System.currentTimeMillis());
+        structData.CurrentTime                                  = calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" +
+                calendar.get(Calendar.DAY_OF_MONTH) + " " + calendar.get(Calendar.HOUR_OF_DAY) + ":" +
+                calendar.get(Calendar.MINUTE) + ":" + calendar.get(Calendar.SECOND) + "." +
+                calendar.get(Calendar.MILLISECOND);
+        structData.Delay                                                    = Double.valueOf(editText.getText().toString());
+
+
+        GsonBuilder builder                                                 = new GsonBuilder();
+        Gson gson                                                           = builder.create();
+        String json                                                         = gson.toJson(structData);
+
+        Single.fromCallable(() -> cServiceMessagingNats.send(json))
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(new DisposableSingleObserver<String>() {
+                               @Override
+                               public void onSuccess(String s) {
+                               }
+
+                               @Override
+                               public void onError(Throwable e) {
+                               }
+                           }
+                );
     }
 
 }

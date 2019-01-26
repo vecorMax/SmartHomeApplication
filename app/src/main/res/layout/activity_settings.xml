@@ -34,17 +34,38 @@
                 <TableRow>
                     <TextView
                         android:id="@+id/enter_temperature_delay"
-                        android:layout_weight="1"
+                        android:layout_weight="6"
                         android:gravity="center"
                         android:layout_height="?attr/actionBarSize"
+                        android:layout_width="0dp"
                         android:text="@string/NewDelayTempeture"/>
 
                     <EditText
                         android:id="@+id/enter_temperature_delay_digit"
-                        android:layout_weight="1"
+                        android:layout_weight="2"
                         android:gravity="center"
                         android:layout_height="?attr/actionBarSize"
+                        android:layout_width="0dp" />
+
+                    <ImageView
+                        android:id="@+id/imageViewEditable"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:layout_height="?actionBarSize"
+                        android:layout_width="0dp"
+                        android:src="@drawable/ic_edit_data"
                         />
+
+                    <ImageView
+                        android:id="@+id/imageViewResultChanges"
+                        android:layout_weight="1"
+                        android:layout_gravity="center"
+                        android:layout_height="?actionBarSize"
+                        android:layout_width="0dp"
+                        android:src="@drawable/ic_check_done"
+
+                        />
+
                 </TableRow>
 
                 <TableRow>
@@ -52,11 +73,12 @@
                     <Button
                         android:id="@+id/save_user_settings"
                         android:gravity="center"
-                        android:layout_weight="2"
+                        android:layout_weight="1"
                         android:layout_width="wrap_content"
                         android:layout_height="?attr/actionBarSize"
                         android:text="@string/SaveUserSettings"
                         />
+
 
                 </TableRow>
 

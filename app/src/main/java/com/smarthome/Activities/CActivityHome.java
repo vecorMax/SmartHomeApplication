@@ -14,13 +14,17 @@ import com.google.android.material.navigation.NavigationView;
 import com.smarthome.Nats.CServiceMessagingNats;
 import com.smarthome.R;
 import com.smarthome.Utils.CBroadcastReceiverConnectivity;
+import com.smarthome.Utils.CCustomApplication;
 import com.smarthome.Utils.CCustomSharedPreference;
+import com.smarthome.Utils.CHomeSharedPreferences;
+
 import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import static com.smarthome.Activities.CActivityLogin.mPrefCustom;
 import static com.smarthome.Nats.CServiceMessagingNats.PARAM_DATA;
 import static com.smarthome.Nats.CServiceMessagingNats.cServiceMessagingNats;
 
@@ -44,9 +48,10 @@ public class CActivityHome extends AppCompatActivity implements NavigationView.O
     public CBroadcastReceiverConnectivity cBroadcastReceiverConnectivity;
     private BroadcastReceiver brUpdatingItems;
 
+    protected static CHomeSharedPreferences mPrefHome;
+
     TextView textTemperature;
     TextView dataTemperature;
-
 
     @SuppressLint("HandlerLeak")
     @Override
@@ -54,6 +59,8 @@ public class CActivityHome extends AppCompatActivity implements NavigationView.O
         setTheme(THEME);
         super.onCreate(savedInstanceState);
         setContentView(LAYOUT);
+
+        mPrefHome                                         = ((CCustomApplication)getApplication()).getSharedHome();
 
         Log.d(LOG_TAG, "CActivityHome: onCreate()");
 
@@ -65,7 +72,9 @@ public class CActivityHome extends AppCompatActivity implements NavigationView.O
         drawerLayout                                        = findViewById(DRAW_LAYOUT);
         navigationView                                      = findViewById(NAVI_VIEW);
         textTemperature                                     = findViewById(R.id.txt_notify_temperature);
+
         dataTemperature                                     = findViewById(R.id.dataTemperature);
+        dataTemperature.setText(String.valueOf(CHomeSharedPreferences.getTempData()));
 
         navigationView.setNavigationItemSelectedListener(this);
         if (cServiceMessagingNats == null) {
@@ -85,7 +94,10 @@ public class CActivityHome extends AppCompatActivity implements NavigationView.O
                 @Override
                 public void onReceive(Context context, Intent intent) {
                     try {
+                        //отображаем результат на экране приложения
                         dataTemperature.setText(String.valueOf(intent.getDoubleExtra(PARAM_DATA, 0.0)));
+                        //запоминаем результат в настройках приложения
+                        CHomeSharedPreferences.setTempData(Float.valueOf(dataTemperature.getText().toString()));
                     }
                     catch (Exception ex){
                         System.out.print(ex.toString());

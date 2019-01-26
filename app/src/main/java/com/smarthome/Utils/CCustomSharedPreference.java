@@ -3,38 +3,42 @@ package com.smarthome.Utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+/**
+ * CCustomSharedPrefernces - хранилище пользовательских настроек
+ */
 public class CCustomSharedPreference
 {
-    private static SharedPreferences sharedPref;
+    private static SharedPreferences sharedPrefCustom;
 
     public CCustomSharedPreference(Context context) {
-        sharedPref = context.getSharedPreferences("SHARED_PREF", Context.MODE_PRIVATE);
+        sharedPrefCustom = context.getSharedPreferences("SHARED_PREF_CUSTOM", Context.MODE_PRIVATE);
     }
 
 
-    public SharedPreferences getInstanceOfSharedPreference(){
-        return sharedPref;
-    }
+//    public SharedPreferences getInstanceOfSharedPreference(){
+//        return sharedPrefCustom;
+//    }
 
     //Save user information
-    public static void setUserData(String userData){
-        sharedPref.edit().putString("USER", userData).apply();
+    //public static ...
+    public void setUserData(String userData){
+        sharedPrefCustom.edit().putString("USER", userData).apply();
     }
 
     //Get user information
     public static String getUserData(){
-        return sharedPref.getString("USER", "");
+        return sharedPrefCustom.getString("USER", "");
     }
 
     //Save login information
     public static void setLoginData(Boolean loginData){
-        sharedPref.edit().putBoolean("LOGIN",loginData).apply();
+        sharedPrefCustom.edit().putBoolean("LOGIN",loginData).apply();
     }
 
     //Get login information
     public static Boolean getLoginData(){
         boolean status = false;
-        status = sharedPref.getBoolean("LOGIN", false);
+        status = sharedPrefCustom.getBoolean("LOGIN", false);
         return status;
     }
 }

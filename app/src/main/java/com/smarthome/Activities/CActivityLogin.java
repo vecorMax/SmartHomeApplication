@@ -59,7 +59,7 @@ public class CActivityLogin extends AppCompatActivity {
     private static final int REQUEST_USE_FINGERPRINT        = 300;
 
     protected static Gson mGson;
-    protected static CCustomSharedPreference mPref;
+    protected static CCustomSharedPreference mPrefCustom;
     private static CUserObject mUser;
     private static String userString;
 
@@ -73,7 +73,7 @@ public class CActivityLogin extends AppCompatActivity {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         mGson                                               = ((CCustomApplication)getApplication()).getGsonObject();
-        mPref                                               = ((CCustomApplication)getApplication()).getShared();
+        mPrefCustom                                         = ((CCustomApplication)getApplication()).getSharedCustom();
 
         fingerprintHandler                                  = new FingerprintHandler(this);
 
@@ -200,7 +200,7 @@ public class CActivityLogin extends AppCompatActivity {
         @Override
         public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
             super.onAuthenticationSucceeded(result);
-            userString                                      = mPref.getUserData();
+            userString                                      = mPrefCustom.getUserData();
             mUser                                           = mGson.fromJson(userString, CUserObject.class);
             if(mUser != null){
                 Toast.makeText(context, context.getString(R.string.auth_successful), Toast.LENGTH_LONG).show();
@@ -211,7 +211,7 @@ public class CActivityLogin extends AppCompatActivity {
                 else{
                     // login with only fingerprint
                     Intent userIntent                       = new Intent(context, CActivityHome.class);
-                    mPref.setLoginData(true);
+                    mPrefCustom.setLoginData(true);
                     userIntent.putExtra("USER_BIO", userString);
                     context.startActivity(userIntent);
                 }
@@ -255,7 +255,7 @@ public class CActivityLogin extends AppCompatActivity {
                 }
                 if(mUser.getPassword().equals(authPassword)){
                     Intent userIntent                               = new Intent(view.getContext(), CActivityHome.class);
-                    mPref.setLoginData(true);
+                    mPrefCustom.setLoginData(true);
                     userIntent.putExtra("USER_BIO", userString);
                     view.getContext().startActivity(userIntent);
                 }else{

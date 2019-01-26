@@ -6,7 +6,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -15,7 +14,7 @@ import com.smarthome.R;
 import com.smarthome.Utils.CCustomApplication;
 import com.smarthome.Utils.CCustomSharedPreference;
 
-import static com.smarthome.Activities.CActivityLogin.mPref;
+import static com.smarthome.Activities.CActivityLogin.mPrefCustom;
 
 public class CActivityStart extends AppCompatActivity {
 
@@ -33,7 +32,7 @@ public class CActivityStart extends AppCompatActivity {
         setContentView(LAYOUT);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        mPref                                               = ((CCustomApplication)getApplication()).getShared();
+        mPrefCustom                                         = ((CCustomApplication)getApplication()).getSharedCustom();
 
         ActionBar actionBar                                 = getSupportActionBar();
         if(null != actionBar){
@@ -41,23 +40,16 @@ public class CActivityStart extends AppCompatActivity {
         }
 
         Button signInButton                                 = findViewById(SIGNIN);
-        signInButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent loginIntent                          = new Intent(CActivityStart.this, CActivityLogin.class);
-                startActivity(loginIntent);
-            }
+        signInButton.setOnClickListener(view -> {
+            Intent loginIntent                              = new Intent(CActivityStart.this, CActivityLogin.class);
+            startActivity(loginIntent);
         });
 
         Button signUpButton                                 = findViewById(SIGNUP);
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent signInIntent                         = new Intent(CActivityStart.this, CActivitySignUp.class);
-                startActivity(signInIntent);
-            }
+        signUpButton.setOnClickListener(view -> {
+            Intent signInIntent                             = new Intent(CActivityStart.this, CActivitySignUp.class);
+            startActivity(signInIntent);
         });
-
 
         if (CCustomSharedPreference.getLoginData()){
             Intent userIntent                               = new Intent(CActivityStart.this, CActivityHome.class);
@@ -65,6 +57,4 @@ public class CActivityStart extends AppCompatActivity {
             finish();
         }
     }
-
-
 }
