@@ -12,14 +12,16 @@ public class CCustomApplication extends Application
 
     private CCustomSharedPreference sharedCustom;
     private CHomeSharedPreferences  sharedHome;
+    private CSettingsSharedPreferences sharedSettings;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        builder = new GsonBuilder();
-        gson = builder.create();
-        sharedCustom = new CCustomSharedPreference(getApplicationContext());
-        sharedHome = new CHomeSharedPreferences(getApplicationContext());
+        builder                                                                     = new GsonBuilder();
+        gson                                                                        = builder.create();
+        sharedCustom                                                                = new CCustomSharedPreference(getApplicationContext());
+        sharedHome                                                                  = new CHomeSharedPreferences(getApplicationContext());
+        sharedSettings                                                              = new CSettingsSharedPreferences(getApplicationContext());
     }
 
     public CCustomSharedPreference getSharedCustom(){
@@ -28,6 +30,10 @@ public class CCustomApplication extends Application
 
     public CHomeSharedPreferences getSharedHome(){
         return sharedHome;
+    }
+
+    public CSettingsSharedPreferences getSharedSettings() {
+        return sharedSettings;
     }
 
     public Gson getGsonObject(){

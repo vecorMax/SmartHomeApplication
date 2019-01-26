@@ -20,7 +20,9 @@ import android.widget.TextView;
 
 import com.google.android.material.navigation.NavigationView;
 import com.smarthome.R;
+import com.smarthome.Utils.CCustomApplication;
 import com.smarthome.Utils.CCustomSharedPreference;
+import com.smarthome.Utils.CHomeSharedPreferences;
 import com.smarthome.Utils.CSettingsSharedPreferences;
 
 import static com.smarthome.Nats.CServiceMessagingNats.sendMessageToServer;
@@ -52,6 +54,7 @@ public class CActivitySettings extends AppCompatActivity implements NavigationVi
 
     protected static CSettingsSharedPreferences mPrefSettings;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,30 +63,39 @@ public class CActivitySettings extends AppCompatActivity implements NavigationVi
         setTheme(THEME);
         setContentView(LAYOUT);
 
+        mPrefSettings                                                   = ((CCustomApplication)getApplication()).getSharedSettings();
+
         init();
         initToolbar();
     }
 
     private void init(){
         drawerLayout                                                    = findViewById(DRAW_LAYOUT);
-        navigationView                                                  = findViewById(NAVI_VIEW);
+        mImageViewAcceptChanges                                         = findViewById(R.id.imageViewResultChanges);
         mTextViewTemperatureDelay                                       = findViewById(TEMP_DELAY);
+
+        navigationView                                                  = findViewById(NAVI_VIEW);
+        navigationView.setNavigationItemSelectedListener(this);
+
         mEditTextTemperatureDelay                                       = findViewById(TMP_DL_DGT);
+        mEditTextTemperatureDelay.setText(String.valueOf(CSettingsSharedPreferences.getTimeDelayData()));
         mEditTextTemperatureDelay.setTag(mEditTextTemperatureDelay.getKeyListener());
         mEditTextTemperatureDelay.setKeyListener(null); // по умолчанию установлен запрет на изменение данных
         mEditTextTemperatureDelay.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
+
         mImageViewEditable                                              = findViewById(R.id.imageViewEditable);
         mImageViewEditable.setOnClickListener(v -> {
             //по кнопке открываем поле mEditTextTemperatureDelay для редактирования
             mEditTextTemperatureDelay.setKeyListener((KeyListener) mEditTextTemperatureDelay.getTag());
             mEditTextTemperatureDelay.getBackground().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_ATOP);
         });
-        mImageViewAcceptChanges                                         = findViewById(R.id.imageViewResultChanges);
+
         mButtonSaveUserSettings                                         = findViewById(SAVE_SETTG);
-        navigationView.setNavigationItemSelectedListener(this);
         mButtonSaveUserSettings.setOnClickListener(v -> {
             //по кнопке отправляем сообщение на сервер об изменении частоты опроса датчика температуры
             sendMessageToServer(mEditTextTemperatureDelay);
+            //запоминаем изменения частоты опроса датчика в настройках приложения
+            CSettingsSharedPreferences.setTimeDelayData(Float.valueOf(mEditTextTemperatureDelay.getText().toString()));
         });
     }
 

@@ -21,5 +21,4 @@ public class CHomeSharedPreferences
         return sharedPrefHome.getFloat("TEMP", 0);
     }
 
-
 }
