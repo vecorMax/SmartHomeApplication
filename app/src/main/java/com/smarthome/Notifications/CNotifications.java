@@ -11,7 +11,6 @@ import static android.content.Context.NOTIFICATION_SERVICE;
 public class CNotifications
 {
 
-
     public static void createNotification(String title, String notifyText, Context mContext){
         NotificationCompat.Builder builder =
                 new NotificationCompat.Builder(mContext)

@@ -14,6 +14,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
 import java.util.Calendar;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
@@ -46,6 +47,7 @@ public class CServiceMessagingNats
     private static final String WORKNATS                                    = "State NATS: connected";
     private static final String NO_NATS                                     = "There is no connection to NATS server";
     private static final String PUBSUCC                                     = "Message was published on server successfully";
+    private static final String REFRDATA                                    = "Data was updated successfully!";
 
     public static final String PARAM_UPD                                    = "upd"; //обновление данных
     public static final String PARAM_UUID                                   = "uuid"; //ID устройства Raspberry Pi3
@@ -76,6 +78,8 @@ public class CServiceMessagingNats
             try {
                 nats                                                        = Nats.connect(address);
                 Log.d(LOG_TAG, CONNNATS);
+                refreshData();
+                Log.d(LOG_TAG, REFRDATA);
                 subscribe();
                 Log.d(LOG_TAG, SUBSCORG);
                 result_connect                                              = CONNNATS;
@@ -97,7 +101,7 @@ public class CServiceMessagingNats
      * Отправка сообщений на сервер NATS.
      * @param str
      */
-    public String send(String str) {
+    private String send(String str) {
         connect();
         if (!nats.isConnected())
             return NO_NATS;
@@ -129,10 +133,10 @@ public class CServiceMessagingNats
     }
 
     /**
-     * Подписка на сообщения от сервера NATS по subject.
+     * Подписка на сообщения от сервера NATS по subject при изменениях текущей температуры
      * Обработка входящих сообщений от сервера NATS.
      */
-    public void subscribe(){
+    private void subscribe(){
         if(!nats.isConnected())
             return;
 
@@ -175,7 +179,54 @@ public class CServiceMessagingNats
 
         };
 
-        nats.subscribe("TEMP_IN_DEVICE_FROM_SERVER", handler); //получение данных о текущей температуре с сервера NATS "главной" платы
+        nats.subscribe("TEMP_IN_DEVICE_FROM_SERVER", handler);
+    }
+
+
+    /**
+     * Отправление запроса на сервер для получения "свежых" данных
+     * при входе в приложение и при нажатии кнопки "Обновить" в меню
+     * приложения
+     */
+    public String  refreshData(){
+        if(!nats.isConnected())
+            return FAILCLSD;
+
+        try {
+            Message msg = nats.request("TEMP_IN_DEVICE_FROM_SERVER_UPD","Help me".getBytes(), 10000);
+            Charset charset                                                 = Charset.forName("UTF-8");
+            String str                                                      = new String(msg.getData(), charset);
+            JSONObject json;
+            String objMeasure;  //объект измерения (Температура, Влажность..)
+            Double data;        //данные с датчика
+            try
+            {
+                json                                                        = new JSONObject(str);
+                objMeasure                                                  = json.getString("ObjectMeasure");
+                data                                                        = Double.valueOf(json.getString("Data"));
+
+                //отправляем вышеуказанные параметры на обработку и на обновление данных на экране Activity через Intent и BroadcastReceiver
+                Intent intent                                               = new Intent(BROADCAST_ACTION);
+                intent.putExtra(PARAM_UPD, 1);
+                intent.putExtra(PARAM_OBJECT, objMeasure);
+                intent.putExtra(PARAM_DATA, data);
+                LocalBroadcastManager.getInstance(mContext).sendBroadcast(intent);
+                return PUBSUCC;
+            }
+            catch(JSONException e)
+            {
+                Log.d(LOG_TAG, FAILPARS);
+                return FAILPBLS;
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            return FAILPBLS;
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+            return FAILPBLS;
+        }
     }
 
     static class StructData {
@@ -185,6 +236,10 @@ public class CServiceMessagingNats
         Double Delay;
     }
 
+    /**
+     * Формирование данных для отправки их на сервер NATS
+     * @param editText - новое значение частоты опроса датчика температуры
+     */
     public static void sendMessageToServer(EditText editText) {
         StructData structData                                               = new StructData();
         structData.UUID                                                     = MAIN_SERVER;

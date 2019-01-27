@@ -12,7 +12,7 @@ import android.widget.Button;
 
 import com.smarthome.R;
 import com.smarthome.Utils.CCustomApplication;
-import com.smarthome.Utils.CCustomSharedPreference;
+import com.smarthome.SharedPreferences.CCustomSharedPreference;
 
 import static com.smarthome.Activities.CActivityLogin.mPrefCustom;
 

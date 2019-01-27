@@ -8,23 +8,29 @@ import android.net.ConnectivityManager;
 import android.os.Bundle;
 import android.content.Intent;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 import com.google.android.material.navigation.NavigationView;
 import com.smarthome.Nats.CServiceMessagingNats;
 import com.smarthome.R;
 import com.smarthome.Utils.CBroadcastReceiverConnectivity;
 import com.smarthome.Utils.CCustomApplication;
-import com.smarthome.Utils.CCustomSharedPreference;
-import com.smarthome.Utils.CHomeSharedPreferences;
+import com.smarthome.SharedPreferences.CCustomSharedPreference;
+import com.smarthome.SharedPreferences.CHomeSharedPreferences;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
+import io.reactivex.Single;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.observers.DisposableSingleObserver;
+import io.reactivex.schedulers.Schedulers;
 
-import static com.smarthome.Activities.CActivityLogin.mPrefCustom;
 import static com.smarthome.Nats.CServiceMessagingNats.PARAM_DATA;
 import static com.smarthome.Nats.CServiceMessagingNats.cServiceMessagingNats;
 
@@ -41,6 +47,8 @@ public class CActivityHome extends AppCompatActivity implements NavigationView.O
     private static final int NOTIFY                         = R.id.Notify;
     private static final int NAVI_VIEW                      = R.id.navigation;
     private static final int SETTINGS                       = R.id.Settings;
+    private static final int MAIN_MENU                      = R.menu.activity_main;
+    private static final int REFRESH                        = R.id.refresh_data;
 
 
     private DrawerLayout drawerLayout;
@@ -52,6 +60,7 @@ public class CActivityHome extends AppCompatActivity implements NavigationView.O
 
     TextView textTemperature;
     TextView dataTemperature;
+    Button btnRefresh;
 
     @SuppressLint("HandlerLeak")
     @Override
@@ -84,7 +93,7 @@ public class CActivityHome extends AppCompatActivity implements NavigationView.O
         //BroadcastReceiverConnectivity для отслеживания состояния сети Интернет на телефоне
         if (cBroadcastReceiverConnectivity == null){
             cBroadcastReceiverConnectivity = new CBroadcastReceiverConnectivity();
-            IntentFilter intentFilterConnectivity = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
+            IntentFilter intentFilterConnectivity           = new IntentFilter(ConnectivityManager.CONNECTIVITY_ACTION);
             registerReceiver(cBroadcastReceiverConnectivity, intentFilterConnectivity);
         }
 
@@ -98,6 +107,7 @@ public class CActivityHome extends AppCompatActivity implements NavigationView.O
                         dataTemperature.setText(String.valueOf(intent.getDoubleExtra(PARAM_DATA, 0.0)));
                         //запоминаем результат в настройках приложения
                         CHomeSharedPreferences.setTempData(Float.valueOf(dataTemperature.getText().toString()));
+                        System.out.print("Time: " + System.currentTimeMillis());
                     }
                     catch (Exception ex){
                         System.out.print(ex.toString());
@@ -105,6 +115,8 @@ public class CActivityHome extends AppCompatActivity implements NavigationView.O
                 }
             };
         }
+
+        btnRefresh                                          = findViewById(REFRESH);
     }
 
     private void initToolbar() {
@@ -117,12 +129,35 @@ public class CActivityHome extends AppCompatActivity implements NavigationView.O
         }
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(MAIN_MENU, menu);
+        return true;
+    }
 
-    /****************************************************************************************************
-     * Обработчик нажатия на элемент меню                                                               *
-     * @param                                                                                           *
-     * @return                                                                                          *
-     ***************************************************************************************************/
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle navigation view item clicks here.
+        if(item.getItemId() == REFRESH) {
+            //обновить данные с датчиков системы
+            Single.fromCallable(() -> cServiceMessagingNats.refreshData())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(new DisposableSingleObserver<String>() {
+                                   @Override
+                                   public void onSuccess(String s) {
+                                   }
+
+                                   @Override
+                                   public void onError(Throwable e) {
+                                   }
+                               }
+                    );
+
+        }
+          return true;
+    }
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -149,11 +184,6 @@ public class CActivityHome extends AppCompatActivity implements NavigationView.O
         return true;
     }
 
-    /****************************************************************************************************
-     * Обработчик нажатия кнопки Назад из меню                                                          *
-     * @param                                                                                           *
-     * @return                                                                                          *
-     ***************************************************************************************************/
     @Override
     public void onBackPressed() {
         if (drawerLayout.isDrawerOpen(GravityCompat.START)) {
@@ -163,11 +193,6 @@ public class CActivityHome extends AppCompatActivity implements NavigationView.O
         }
     }
 
-    /****************************************************************************************************
-     * Выход из учетной записи пользователя                                                             *
-     * @param                                                                                           *
-     * @return                                                                                          *
-     ***************************************************************************************************/
     public void userLogOut()  {
         CCustomSharedPreference.setLoginData(false);
         unregisterReceiver(cBroadcastReceiverConnectivity);
@@ -176,30 +201,15 @@ public class CActivityHome extends AppCompatActivity implements NavigationView.O
         finish();
     }
 
-    /****************************************************************************************************
-     * Вернутся на начальную страницу                                                                   *
-     * @param                                                                                           *
-     * @return                                                                                          *
-     ***************************************************************************************************/
     public void userHomePage() {
         onBackPressed();
     }
 
-    /****************************************************************************************************
-     * Вернутся на страницу управления уведомлениями                                                    *
-     * @param                                                                                           *
-     * @return                                                                                          *
-     ***************************************************************************************************/
     public void userNotify() {
         startActivity(new Intent(this, CActivityNotifications.class));
         finish();
     }
 
-    /****************************************************************************************************
-     * Вернутся на страницу управления настройками                                                      *
-     * @param                                                                                           *
-     * @return                                                                                          *
-     ***************************************************************************************************/
     public void userSettings() {
         startActivity(new Intent(this,CActivitySettings.class));
         finish();

@@ -5,7 +5,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioGroup;
@@ -15,7 +14,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.smarthome.R;
 import com.smarthome.Utils.CCustomApplication;
-import com.smarthome.Utils.CCustomSharedPreference;
+import com.smarthome.SharedPreferences.CCustomSharedPreference;
 import com.smarthome.Utils.CUserObject;
 
 public class CActivitySignUp extends AppCompatActivity {
@@ -58,52 +57,45 @@ public class CActivitySignUp extends AppCompatActivity {
         phoneNumber                                         = findViewById(PHNNUM);
 
         radioGroup                                          = findViewById(RADGRP);
-        radioGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int id) {
-                if(id == FNGPRN){
-                    loginOption                             = false;
-                }
-                if(id == FNGPSW){
-                    loginOption                             = true;
-                }
+        radioGroup.setOnCheckedChangeListener((radioGroup, id) -> {
+            if(id == FNGPRN){
+                loginOption                                 = false;
+            }
+            if(id == FNGPSW){
+                loginOption                                 = true;
             }
         });
 
         Button signUpButton                                 = findViewById(SIGNUP);
-        signUpButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String usernameValue                        = username.getText().toString();
-                String emailValue                           = email.getText().toString();
-                String passwordValue                        = password.getText().toString();
-                String addressValue                         = address.getText().toString();
-                String phonenumberValue                     = phoneNumber.getText().toString();
+        signUpButton.setOnClickListener(view -> {
+            String usernameValue                            = username.getText().toString();
+            String emailValue                               = email.getText().toString();
+            String passwordValue                            = password.getText().toString();
+            String addressValue                             = address.getText().toString();
+            String phonenumberValue                         = phoneNumber.getText().toString();
 
-                int selectedButtonId                        = radioGroup.getCheckedRadioButtonId();
+            int selectedButtonId                            = radioGroup.getCheckedRadioButtonId();
 
-                if(TextUtils.isEmpty(usernameValue) || TextUtils.isEmpty(emailValue)|| TextUtils.isEmpty(passwordValue)
-                        || TextUtils.isEmpty(addressValue) || TextUtils.isEmpty(phonenumberValue)){
-                    Toast.makeText(CActivitySignUp.this, "All input fields must be filled", Toast.LENGTH_LONG).show();
-                }else if(selectedButtonId == -1){
-                    Toast.makeText(CActivitySignUp.this, "Login option must be selected", Toast.LENGTH_LONG).show();
-                }else{
-                    Gson gson                               = ((CCustomApplication)getApplication()).getGsonObject();
-                    CUserObject userData                    = new CUserObject(usernameValue, emailValue, passwordValue, addressValue, phonenumberValue, loginOption);
-                    String userDataString                   = gson.toJson(userData);
-                    CCustomSharedPreference pref            = ((CCustomApplication)getApplication()).getSharedCustom();
-                    pref.setUserData(userDataString);
-                    //pref.setLoginData(true);
+            if(TextUtils.isEmpty(usernameValue) || TextUtils.isEmpty(emailValue)|| TextUtils.isEmpty(passwordValue)
+                    || TextUtils.isEmpty(addressValue) || TextUtils.isEmpty(phonenumberValue)){
+                Toast.makeText(CActivitySignUp.this, "All input fields must be filled", Toast.LENGTH_LONG).show();
+            }else if(selectedButtonId == -1){
+                Toast.makeText(CActivitySignUp.this, "Login option must be selected", Toast.LENGTH_LONG).show();
+            }else{
+                Gson gson                                   = ((CCustomApplication)getApplication()).getGsonObject();
+                CUserObject userData                        = new CUserObject(usernameValue, emailValue, passwordValue, addressValue, phonenumberValue, loginOption);
+                String userDataString                       = gson.toJson(userData);
+                CCustomSharedPreference pref                = ((CCustomApplication)getApplication()).getSharedCustom();
+                pref.setUserData(userDataString);
 
-                    username.setText("");
-                    email.setText("");
-                    password.setText("");
-                    address.setText("");
-                    phoneNumber.setText("");
+                username.setText("");
+                email.setText("");
+                password.setText("");
+                address.setText("");
+                phoneNumber.setText("");
 
-                    Intent loginIntent                      = new Intent(CActivitySignUp.this, CActivityLogin.class);
-                    startActivity(loginIntent);
-                }
+                Intent loginIntent                          = new Intent(CActivitySignUp.this, CActivityLogin.class);
+                startActivity(loginIntent);
             }
         });
     }

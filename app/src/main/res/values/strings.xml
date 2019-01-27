@@ -47,6 +47,7 @@
     <string name="temperature">Temperature</string>
     <string name="NewDelayTempeture">Time Delay</string>
     <string name="SaveUserSettings">Save</string>
+    <string name="update">Update</string>
 
 
 </resources>

@@ -4,6 +4,9 @@ import android.app.Application;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.smarthome.SharedPreferences.CCustomSharedPreference;
+import com.smarthome.SharedPreferences.CHomeSharedPreferences;
+import com.smarthome.SharedPreferences.CSettingsSharedPreferences;
 
 public class CCustomApplication extends Application
 {
@@ -11,7 +14,7 @@ public class CCustomApplication extends Application
     private GsonBuilder builder;
 
     private CCustomSharedPreference sharedCustom;
-    private CHomeSharedPreferences  sharedHome;
+    private CHomeSharedPreferences sharedHome;
     private CSettingsSharedPreferences sharedSettings;
 
     @Override

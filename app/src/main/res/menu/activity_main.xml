@@ -4,10 +4,19 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/search"
+        android:id="@+id/help_data"
         android:title="@string/search_title"
         android:orderInCategory="1"
         android:icon="@drawable/ic_info"
-        app:showAsAction="ifRoom"/>
+        app:showAsAction="ifRoom"
+        />
+
+    <item
+        android:id="@+id/refresh_data"
+        android:title="@string/update"
+        android:orderInCategory="1"
+        android:icon="@drawable/ic_refresh_"
+        app:showAsAction="ifRoom"
+        />
 
 </menu>

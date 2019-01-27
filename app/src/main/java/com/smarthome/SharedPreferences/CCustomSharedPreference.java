@@ -1,4 +1,4 @@
-package com.smarthome.Utils;
+package com.smarthome.SharedPreferences;
 
 import android.content.Context;
 import android.content.SharedPreferences;

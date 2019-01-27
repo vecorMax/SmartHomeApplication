@@ -52,7 +52,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="jar:file:/D:/ProgramFiles/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_check_black_24dp.xml" />
+                                      <entry key="url" value="jar:file:/D:/ProgramFiles/Android%20Studio/plugins/android/lib/android.jar!/images/material_design_icons/navigation/ic_refresh_black_24dp.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -62,7 +62,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_check_changes" />
+                            <entry key="outputName" value="ic_refresh_" />
                             <entry key="sourceFile" value="C:\Users\mzhuz" />
                           </map>
                         </option>

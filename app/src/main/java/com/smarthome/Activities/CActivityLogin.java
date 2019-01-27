@@ -14,7 +14,6 @@ import android.security.keystore.KeyGenParameterSpec;
 import android.security.keystore.KeyProperties;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
@@ -24,7 +23,7 @@ import android.widget.Toast;
 import com.google.gson.Gson;
 import com.smarthome.R;
 import com.smarthome.Utils.CCustomApplication;
-import com.smarthome.Utils.CCustomSharedPreference;
+import com.smarthome.SharedPreferences.CCustomSharedPreference;
 import com.smarthome.Utils.CUserObject;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
@@ -90,12 +89,7 @@ public class CActivityLogin extends AppCompatActivity {
             cryptoObject                                    = new FingerprintManager.CryptoObject(mCipher);
         }
         ImageView fingerprintImage                          = findViewById(R.id.fingerprint_image);
-        fingerprintImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                fingerprintHandler.completeFingerAuthentication(fingerprintManager, cryptoObject);
-            }
-        });
+        fingerprintImage.setOnClickListener(view -> fingerprintHandler.completeFingerAuthentication(fingerprintManager, cryptoObject));
     }
 
     private void checkDeviceFingerprintSupport() {
@@ -142,9 +136,9 @@ public class CActivityLogin extends AppCompatActivity {
 
     private Cipher instantiateCipher(){
         try {
-            cipher                                          = Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/" + KeyProperties.BLOCK_MODE_CBC + "/" + KeyProperties.ENCRYPTION_PADDING_PKCS7);
+            cipher                                              = Cipher.getInstance(KeyProperties.KEY_ALGORITHM_AES + "/" + KeyProperties.BLOCK_MODE_CBC + "/" + KeyProperties.ENCRYPTION_PADDING_PKCS7);
             keyStore.load(null);
-            SecretKey secretKey                             = (SecretKey)keyStore.getKey(FINGERPRINT_KEY, null);
+            SecretKey secretKey                                 = (SecretKey)keyStore.getKey(FINGERPRINT_KEY, null);
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
             return cipher;
         } catch (NoSuchAlgorithmException | NoSuchPaddingException | UnrecoverableKeyException |
@@ -162,9 +156,9 @@ public class CActivityLogin extends AppCompatActivity {
                 //generate fingerprint keystore
                 generateFingerprintKeyStore();
                 //instantiate Cipher class
-                Cipher mCipher                              = instantiateCipher();
+                Cipher mCipher                                  = instantiateCipher();
                 if(mCipher != null){
-                    cryptoObject                            = new FingerprintManager.CryptoObject(mCipher);
+                    cryptoObject                                = new FingerprintManager.CryptoObject(mCipher);
                 }
             }
             else{
@@ -177,7 +171,7 @@ public class CActivityLogin extends AppCompatActivity {
 
     public static class FingerprintHandler extends FingerprintManager.AuthenticationCallback{
 
-        private static final String TAG                     = FingerprintHandler.class.getSimpleName();
+        private static final String TAG                         = FingerprintHandler.class.getSimpleName();
         private Context context;
 
         public FingerprintHandler(Context context){
@@ -200,8 +194,8 @@ public class CActivityLogin extends AppCompatActivity {
         @Override
         public void onAuthenticationSucceeded(FingerprintManager.AuthenticationResult result) {
             super.onAuthenticationSucceeded(result);
-            userString                                      = mPrefCustom.getUserData();
-            mUser                                           = mGson.fromJson(userString, CUserObject.class);
+            userString                                          = CCustomSharedPreference.getUserData();
+            mUser                                               = mGson.fromJson(userString, CUserObject.class);
             if(mUser != null){
                 Toast.makeText(context, context.getString(R.string.auth_successful), Toast.LENGTH_LONG).show();
                 if(mUser.isLoginOption()){
@@ -211,7 +205,7 @@ public class CActivityLogin extends AppCompatActivity {
                 else{
                     // login with only fingerprint
                     Intent userIntent                       = new Intent(context, CActivityHome.class);
-                    mPrefCustom.setLoginData(true);
+                    CCustomSharedPreference.setLoginData(true);
                     userIntent.putExtra("USER_BIO", userString);
                     context.startActivity(userIntent);
                 }
@@ -245,25 +239,22 @@ public class CActivityLogin extends AppCompatActivity {
         openDialog.setTitle("Enter Password");
         final EditText passwordDialog                               = openDialog.findViewById(R.id.password);
         Button loginWithPasswordButton                              = openDialog.findViewById(R.id.login_button);
-        loginWithPasswordButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String authPassword                                 = passwordDialog.getText().toString();
-                if(TextUtils.isEmpty(authPassword)){
-                    Toast.makeText(view.getContext(), "Password field must be filled", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                if(mUser.getPassword().equals(authPassword)){
-                    Intent userIntent                               = new Intent(view.getContext(), CActivityHome.class);
-                    mPrefCustom.setLoginData(true);
-                    userIntent.putExtra("USER_BIO", userString);
-                    view.getContext().startActivity(userIntent);
-                }else{
-                    Toast.makeText(view.getContext(), "Incorrect password! Try again", Toast.LENGTH_LONG).show();
-                    return;
-                }
-                openDialog.dismiss();
+        loginWithPasswordButton.setOnClickListener(view -> {
+            String authPassword                                     = passwordDialog.getText().toString();
+            if(TextUtils.isEmpty(authPassword)){
+                Toast.makeText(view.getContext(), "Password field must be filled", Toast.LENGTH_LONG).show();
+                return;
             }
+            if(mUser.getPassword().equals(authPassword)){
+                Intent userIntent                                   = new Intent(view.getContext(), CActivityHome.class);
+                CCustomSharedPreference.setLoginData(true);
+                userIntent.putExtra("USER_BIO", userString);
+                view.getContext().startActivity(userIntent);
+            }else{
+                Toast.makeText(view.getContext(), "Incorrect password! Try again", Toast.LENGTH_LONG).show();
+                return;
+            }
+            openDialog.dismiss();
         });
         openDialog.show();
     }

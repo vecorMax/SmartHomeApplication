@@ -34,14 +34,17 @@
                         android:layout_weight="1"
                         android:gravity="center"
                         android:layout_height="?attr/actionBarSize"
-                        android:text="@string/temperature"/>
+                        android:layout_width="0dp"
+                        android:text="@string/temperature"
+                        />
 
                     <TextView
                         android:id="@+id/dataTemperature"
                         android:layout_weight="1"
                         android:gravity="center"
                         android:layout_height="?attr/actionBarSize"
-                        android:text="" />
+                        android:layout_width="0dp"
+                        />
                 </TableRow>
 
             </TableLayout>

@@ -12,7 +12,6 @@ import android.os.Bundle;
 import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -21,9 +20,8 @@ import android.widget.TextView;
 import com.google.android.material.navigation.NavigationView;
 import com.smarthome.R;
 import com.smarthome.Utils.CCustomApplication;
-import com.smarthome.Utils.CCustomSharedPreference;
-import com.smarthome.Utils.CHomeSharedPreferences;
-import com.smarthome.Utils.CSettingsSharedPreferences;
+import com.smarthome.SharedPreferences.CCustomSharedPreference;
+import com.smarthome.SharedPreferences.CSettingsSharedPreferences;
 
 import static com.smarthome.Nats.CServiceMessagingNats.sendMessageToServer;
 
@@ -42,6 +40,8 @@ public class CActivitySettings extends AppCompatActivity implements NavigationVi
     private static final int TEMP_DELAY                                 = R.id.enter_temperature_delay;
     private static final int TMP_DL_DGT                                 = R.id.enter_temperature_delay_digit;
     private static final int SAVE_SETTG                                 = R.id.save_user_settings;
+    private static final int IVRESCHANG                                 = R.id.imageViewResultChanges;
+    private static final int IVEDITABLE                                 = R.id.imageViewEditable;
 
     private DrawerLayout drawerLayout;
     private NavigationView navigationView;
@@ -71,7 +71,7 @@ public class CActivitySettings extends AppCompatActivity implements NavigationVi
 
     private void init(){
         drawerLayout                                                    = findViewById(DRAW_LAYOUT);
-        mImageViewAcceptChanges                                         = findViewById(R.id.imageViewResultChanges);
+        mImageViewAcceptChanges                                         = findViewById(IVRESCHANG);
         mTextViewTemperatureDelay                                       = findViewById(TEMP_DELAY);
 
         navigationView                                                  = findViewById(NAVI_VIEW);
@@ -83,7 +83,7 @@ public class CActivitySettings extends AppCompatActivity implements NavigationVi
         mEditTextTemperatureDelay.setKeyListener(null); // по умолчанию установлен запрет на изменение данных
         mEditTextTemperatureDelay.getBackground().setColorFilter(Color.GRAY, PorterDuff.Mode.SRC_ATOP);
 
-        mImageViewEditable                                              = findViewById(R.id.imageViewEditable);
+        mImageViewEditable                                              = findViewById(IVEDITABLE);
         mImageViewEditable.setOnClickListener(v -> {
             //по кнопке открываем поле mEditTextTemperatureDelay для редактирования
             mEditTextTemperatureDelay.setKeyListener((KeyListener) mEditTextTemperatureDelay.getTag());
@@ -92,9 +92,9 @@ public class CActivitySettings extends AppCompatActivity implements NavigationVi
 
         mButtonSaveUserSettings                                         = findViewById(SAVE_SETTG);
         mButtonSaveUserSettings.setOnClickListener(v -> {
-            //по кнопке отправляем сообщение на сервер об изменении частоты опроса датчика температуры
+            // отправляем сообщение на сервер об изменении частоты опроса датчика температуры
             sendMessageToServer(mEditTextTemperatureDelay);
-            //запоминаем изменения частоты опроса датчика в настройках приложения
+            //запоминаем изменения частоты опроса датчика в настройках мобильного приложения
             CSettingsSharedPreferences.setTimeDelayData(Float.valueOf(mEditTextTemperatureDelay.getText().toString()));
         });
     }
